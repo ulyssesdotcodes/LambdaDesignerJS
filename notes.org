@@ -1,0 +1,8 @@
+* Tests (all of type "do this thing" -> json)
+** DONE Create a node
+** DONE Set node parameters
+** DONE Parse single node with params
+** TODO Send to TD
+** TODO Parse from file watchdog
+** TODO Integration test
+** TODO Figure out let equal statements

@@ -1,0 +1,8 @@
+{
+    "type": "CHOP",
+    "optype": "waveCHOP",
+    "params": {
+        "period": { "type": "float", "value": "absTime.seconds % 1" },
+        "rate": { "type": "float", "value": "10" }
+    }
+}
