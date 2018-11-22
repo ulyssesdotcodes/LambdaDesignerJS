@@ -4,7 +4,9 @@
   "description": "LambdaDesigner in the browser",
   "scripts": {
     "test": "mocha --require ts-node/register test/**/*.ts",
-    "build": "tsc && node ./build/TDOutputWatch.js"
+    "build": "tsc && find ./src -name '*.js' -type f -exec cp {} ./build \\;",
+    "renamemjs": "rename 's/.js/.mjs/' build/*.js",
+    "runWatch": "npm run build && node ./build/TDOutputWatch.js"
   },
   "author": "",
   "license": "BSD3",

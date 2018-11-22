@@ -8,6 +8,7 @@ const clientWrite = (data: string, client: net.Socket): Either<Error, boolean> =
   return tryCatch(() => client.write(data))
 }
 
+Function('return (function(validate, data){ console.log(validate(data)) })')()(ldj.parseJSON, "{\"type\": \"TOP\", \"optype\" : \"waveCHOP\"}")
 
 var client = new net.Socket()
 client.connect(5959, "192.168.86.185", () => {

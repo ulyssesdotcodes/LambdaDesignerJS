@@ -2,7 +2,10 @@
 ** DONE Create a node
 ** DONE Set node parameters
 ** DONE Parse single node with params
-** TODO Send to TD
-** TODO Parse from file watchdog
-** TODO Integration test
-** TODO Figure out let equal statements
+** DONE Send to TD
+** DONE Parse from file watchdog
+** DONE Connections
+** DONE Tool for chaining connections
+** TODO Tool for creating parameters
+** TODO NodeMap for Connections
+** TODO NodeMap for params

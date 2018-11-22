@@ -6,20 +6,22 @@ describe('Node', () => {
         const n : INode = {
             type: "CHOP",
             optype: "waveCHOP",
-            params: {}
+            params: {},
+            connections: []
         }
         let parsed = nodeToJSON(n);
-        expect(parsed).to.equal("{\"waveCHOP_0\":{\"ty\":\"waveCHOP\",\"parameters\":{}}}")
+        expect(parsed).to.equal("{\"/waveCHOP_0\":{\"ty\":\"waveCHOP\",\"parameters\":{},\"connections\":[]}}")
     });
     it('can parse parameters', ()=>{
         const n: INode = {
             type: "CHOP",
             optype: "waveCHOP",
-            params: {"rate": { type: "float", value: "1.0" }}
+            params: {"rate": { type: "float", value: "1.0" }},
+            connections: []
         }
 
         let parsed = nodeToJSON(n);
 
-        expect(parsed).to.equal("{\"waveCHOP_0\":{\"ty\":\"waveCHOP\",\"parameters\":{\"rate\":\"1.0\"}}}")
+        expect(parsed).to.equal("{\"/waveCHOP_0\":{\"ty\":\"waveCHOP\",\"parameters\":{\"rate\":\"1.0\"},\"connections\":[]}}")
     })
 })

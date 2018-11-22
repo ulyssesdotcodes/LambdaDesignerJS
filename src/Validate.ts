@@ -7,10 +7,16 @@ import { PathReporter } from 'io-ts/lib/PathReporter';
 export function parseJSON(data: string) : Either<string[], INode> {
     return tryCatch(() => JSON.parse(data))
             .mapLeft(e => [e.message])
-            .chain(d => Node.decode(d).mapLeft(n => PathReporter.report(left(n))))
+            .chain(d => validateNode(d))
+}
+
+export function validateNode(node: INode) : Either<string[], INode> {
+    return Node.decode(node)
+            .mapLeft(n => PathReporter.report(left(n)))
             .chain(n => n.optype in parsedops ? right(n) : left(["optype '" + n.optype + "' does not exist"]))
             .chain(n => parsedops[n.optype].type == n.type ? right(n) : left(["type '" + n.type + "' is not correct for '" + n.optype + "'"]))
-            .chain(n => testParams(n.optype, n.params).map(_ => n));
+            .chain(n => testParams(n.optype, n.params).map(_ => n))
+            .chain(n => n.connections.map(c => c.type == n.type ? validateNode(c) : left(["expected '" + n.type + "' as '" + n.optype + "' child but got '" + c.type + "'"])))
 }
  
 export function testParams(optype: string, params: {[name: string] : IParam }) : Either<string[], {[name: string] : any}> {

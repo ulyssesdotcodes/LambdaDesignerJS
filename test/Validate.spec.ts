@@ -13,7 +13,8 @@ describe('Validate', () => {
         let jsonn = JSON.stringify({
             type: "CHOP",
             optype: "waveCHOP",
-            params: {}
+            params: {},
+            connections: []
         })
         const n = parseJSON(jsonn)
         expect(isRight(n)).to.be.true
@@ -23,7 +24,8 @@ describe('Validate', () => {
         let jsonn = JSON.stringify({
             type: "ha",
             optype: 2,
-            params: "test"
+            params: "test",
+            connections: []
         })
         const n = parseJSON(jsonn)
         expect(isLeft(n)).to.be.true
@@ -33,7 +35,8 @@ describe('Validate', () => {
         let jsonn = JSON.stringify({
             type: "CHOP",
             optype: "notaCHOP",
-            params: {}
+            params: {},
+            connections: []
         })
         const n = parseJSON(jsonn)
         expect(isLeft(n)).to.be.true
@@ -43,7 +46,8 @@ describe('Validate', () => {
         let jsonn = JSON.stringify({
             type: "TOP",
             optype: "waveCHOP",
-            params: {}
+            params: {},
+            connections: []
         })
         const n = parseJSON(jsonn)
         expect(isLeft(n)).to.be.true
@@ -53,7 +57,8 @@ describe('Validate', () => {
         let jsonn = JSON.stringify({
             type: "CHOP",
             optype: "waveCHOP",
-            params: {"rate": {type: "float", value: "1.0"}}
+            params: {"rate": {type: "float", value: "1.0"}},
+            connections: []
         })
         const n = parseJSON(jsonn)
         expect(isRight(n)).to.be.true
@@ -63,7 +68,8 @@ describe('Validate', () => {
         let jsonn = JSON.stringify({
             type: "CHOP",
             optype: "waveCHOP",
-            params: {"notaparam": { type: "string", value: "nope" } }
+            params: {"notaparam": { type: "string", value: "nope" } },
+            connections: []
         })
         const n = parseJSON(jsonn)
         expect(isLeft(n)).to.be.true
@@ -73,7 +79,8 @@ describe('Validate', () => {
         let jsonn = JSON.stringify({
             type: "CHOP",
             optype: "waveCHOP",
-            params: {"rate": {type: "string", value: "1.0"} }
+            params: {"rate": {type: "string", value: "1.0"} },
+            connections: []
         })
         const n = parseJSON(jsonn)
         expect(isLeft(n)).to.be.true
