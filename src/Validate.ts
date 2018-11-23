@@ -3,6 +3,7 @@ import { Either, left, right, tryCatch } from 'fp-ts/lib/Either'
 import { Errors, Validation } from 'io-ts'
 import * as parsedops from './parsedjs.json'
 import { PathReporter } from 'io-ts/lib/PathReporter';
+import * as fpa from 'fp-ts/lib/Array'
 
 export function parseJSON(data: string) : Either<string[], INode> {
     return tryCatch(() => JSON.parse(data))
@@ -16,7 +17,15 @@ export function validateNode(node: INode) : Either<string[], INode> {
             .chain(n => n.optype in parsedops ? right(n) : left(["optype '" + n.optype + "' does not exist"]))
             .chain(n => parsedops[n.optype].type == n.type ? right(n) : left(["type '" + n.type + "' is not correct for '" + n.optype + "'"]))
             .chain(n => testParams(n.optype, n.params).map(_ => n))
-            .chain(n => n.connections.map(c => c.type == n.type ? validateNode(c) : left(["expected '" + n.type + "' as '" + n.optype + "' child but got '" + c.type + "'"])))
+            .chain(n => n.connections.length < parsedops[n.optype]['minInputs'] ? left(["too few inputs for node '" + n.optype + "'"]) : right(n))
+            .chain(n => n.connections.length > parsedops[n.optype]['maxInputs'] ? left(["too many inputs for node '" + n.optype + "'"]) : right(n))
+            .chain(n => fpa.array.reduce<INode, Either<string[], INode>>(n.connections, right(n), (b, c) => 
+                b.chain(_ => testConnection(n.type, n.optype, c)).chain(_ => b)
+            ))
+}
+
+export function testConnection(type: string, optype: string, connection:INode) : Either<string[], INode> {
+    return connection.type == type ? validateNode(connection) : left(["expected '" + type + "' as '" + optype + "' child but got '" + connection.type + "'"])
 }
  
 export function testParams(optype: string, params: {[name: string] : IParam }) : Either<string[], {[name: string] : any}> {
@@ -30,38 +39,3 @@ export function testParams(optype: string, params: {[name: string] : IParam }) :
 
     return right(params)
 }
-
-// export interface TOP {
-//     kind: "TOP";
-// } 
-
-// export interface MAT {
-//     kind: "MAT"
-// }
-
-// export interface CHOP {
-//     kind: "CHOP"
-// }
-
-// export interface SOP {
-//     kind: "SOP"
-// }
-
-// export interface COMP {
-//     kind: "COMP"
-// }
-
-// export type OP = TOP | MAT | CHOP | SOP | COMP
-
-// export class Node<OP> {
-//     public params: ParamMap;
-//     constructor(public readonly json: string) {
-//         let input = JSON.parse(json);
-//     }
-// }
-
-// export type ParamType = string | number | boolean | undefined | Node<OP>
-
-// export interface ParamMap {
-//     [name: string]: ParamType
-// }

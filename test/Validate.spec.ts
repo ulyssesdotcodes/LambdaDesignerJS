@@ -86,4 +86,112 @@ describe('Validate', () => {
         expect(isLeft(n)).to.be.true
         expect(n.mapLeft(n => n[0]).fold<any>(t.identity, t.identity)).to.equal("param type is not correct for 'waveCHOP.rate'")
     });
+    it('can have children', ()=> {
+        let child = {
+            type: "TOP",
+            optype: "rectangleTOP",
+            params: {},
+            connections: []
+        }
+        let child2 = {
+            type: "TOP",
+            optype: "circleTOP",
+            params: {},
+            connections: []
+        }
+        let comp = {
+            type: "TOP",
+            optype: "compositeTOP",
+            params: {"operand": {type: "menu", value: "31"} },
+            connections: [child, child2]
+        }
+        let jsonn = JSON.stringify({
+            type: "TOP",
+            optype: "blurTOP",
+            params: {},
+            connections: [comp ]
+        })
+        const n = parseJSON(jsonn)
+        expect(isRight(n)).to.be.true
+        expect(n.map(n => n.connections[0].connections[1].optype).fold<any>(t.identity, t.identity)).to.equal("circleTOP")
+    });
+    it('errors if child is invalid', () =>{
+        let child = {
+            type: "TOP",
+            optype: "waveTOP",
+            params: {}
+        }
+        let child2 = {
+            type: "TOP",
+            optype: "waveTOP",
+            params: {},
+            connections: [child]
+        }
+        let jsonn = JSON.stringify({
+            type: "CHOP",
+            optype: "waveCHOP",
+            params: {},
+            connections: [child2]
+        })
+        const n = parseJSON(jsonn)
+        expect(isLeft(n)).to.be.true
+        expect(n.mapLeft(n => n[0]).fold<any>(t.identity, t.identity)).to.equal("Invalid value undefined supplied to : Node/connections: Array<Node>/0: Node/connections: Array<Node>/0: Node/connections: Array<Node>")
+    });
+    it('errors if child type is invalid', () =>{
+        let child = {
+            type: "TOP",
+            optype: "blurTOP",
+            params: {},
+            connections: []
+        }
+        let jsonn = JSON.stringify({
+            type: "CHOP",
+            optype: "waveCHOP",
+            params: {},
+            connections: [child]
+        })
+        const n = parseJSON(jsonn)
+        expect(isLeft(n)).to.be.true
+        expect(n.mapLeft(n => n[0]).fold<any>(t.identity, t.identity)).to.equal("too many inputs for node 'waveCHOP'")
+    });
+    it('errors if second child is invalid', () =>{
+        let child = {
+            type: "CHOP",
+            optype: "waveCHOP",
+            params: {},
+            connections: []
+        }
+        let child2 = {
+            type: "TOP",
+            optype: "blurTOP",
+            params: {},
+            connections: []
+        }
+        let jsonn = JSON.stringify({
+            type: "CHOP",
+            optype: "waveCHOP",
+            params: {"rate": {type: "string", value: "1.0"} },
+            connections: [child, child2]
+        })
+        const n = parseJSON(jsonn)
+        expect(isLeft(n)).to.be.true
+        expect(n.mapLeft(n => n[0]).fold<any>(t.identity, t.identity)).to.equal("param type is not correct for 'waveCHOP.rate'")
+    });
+    it('errors if wrong number of children', () =>{
+        let child = {
+            type: "CHOP",
+            optype: "waveCHOP",
+            params: {},
+            connections: []
+        }
+        let jsonn = JSON.stringify({
+            type: "CHOP",
+            optype: "waveCHOP",
+            params: {},
+            connections: [child]
+        })
+        const n = parseJSON(jsonn)
+        expect(isLeft(n)).to.be.true
+        expect(n.mapLeft(n => n[0]).fold<any>(t.identity, t.identity)).to.equal("too many inputs for node 'waveCHOP'")
+    });
 })

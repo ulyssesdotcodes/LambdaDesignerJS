@@ -5,6 +5,7 @@
   "scripts": {
     "test": "mocha --require ts-node/register test/**/*.ts",
     "build": "tsc && find ./src -name '*.js' -type f -exec cp {} ./build \\;",
+    "buildBridge": "npm run build && node ./build/Bridge.js",
     "renamemjs": "rename 's/.js/.mjs/' build/*.js",
     "runWatch": "npm run build && node ./build/TDOutputWatch.js"
   },
@@ -19,8 +20,12 @@
     "typescript": "^3.1.6"
   },
   "dependencies": {
+    "@types/deep-equal": "^1.0.1",
     "@types/node": "^10.12.9",
+    "@types/socket.io": "^2.1.0",
+    "deep-equal": "^1.0.1",
     "fp-ts": "^1.10.0",
-    "io-ts": "^1.4.1"
+    "io-ts": "^1.4.1",
+    "socket.io": "^2.1.1"
   }
 }

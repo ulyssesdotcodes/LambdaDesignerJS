@@ -24,4 +24,27 @@ describe('Node', () => {
 
         expect(parsed).to.equal("{\"/waveCHOP_0\":{\"ty\":\"waveCHOP\",\"parameters\":{\"rate\":\"1.0\"},\"connections\":[]}}")
     })
+    it('can parse parameters', ()=>{
+        const c1: INode = {
+            type: "CHOP",
+            optype: "waveCHOP",
+            params: {"rate": { type: "float", value: "1.0" }},
+            connections: []
+        }
+        const c2: INode = {
+            type: "CHOP",
+            optype: "waveCHOP",
+            params: {"rate": { type: "float", value: "1.0" }},
+            connections: []
+        }
+        const n: INode = {
+            type: "CHOP",
+            optype: "mathCHOP",
+            params: {},
+            connections: [c1, c2]
+        }
+
+        let parsed = nodeToJSON(n);
+        console.log(parsed)
+    })
 })

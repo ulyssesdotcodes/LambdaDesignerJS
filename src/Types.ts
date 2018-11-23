@@ -11,7 +11,7 @@ export interface INode {
     type: OP,
     optype: string
     params: {[key: string]: IParam }
-    connections: INode[]
+    connections: Array<INode>
 }
 
 export const Param : t.RecursiveType<t.Type<IParam>> = t.recursion<IParam>('Param', _ => t.interface({
