@@ -2,9 +2,11 @@
   "name": "lambdadesignerjs",
   "version": "1.0.0",
   "description": "LambdaDesigner in the browser",
+  "files":["build"],
+  "main": "build/index.js",
   "scripts": {
     "test": "mocha --require ts-node/register test/**/*.ts",
-    "build": "tsc && find ./src -name '*.html' -type f -exec cp {} ./build \\; && find ./src -name '*.js' -type f -exec cp {} ./build \\;",
+    "build": "tsc",
     "buildServer": "gulp && node ./build/Server.js",
     "renamemjs": "rename 's/.js/.mjs/' build/*.js",
     "runWatch": "gulp && node ./build/TDOutputWatch.js"
