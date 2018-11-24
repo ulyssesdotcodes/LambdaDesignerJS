@@ -1,19 +1,18 @@
 import * as j from './JSON'
 import * as c from './Chain'
 import * as v from './Validate'
-import { Either } from 'fp-ts/lib/Either'
+import { Either, tryCatch } from 'fp-ts/lib/Either'
 
 import * as sock from 'socket.io-client'
 
 const SERVER_URL = "http://localhost:8080"
 
 function run(obj) {
-  return Function("return (function(c, v) { return v((function(v) { " + obj + " })())})")()(c, (n) => v.validateNode(n).map(n => j.nodeToJSON(n)))
+  return Function("return (function(c, v) { return v((function() { " + obj + " })())})")()(c, (n) => v.validateNode(n).map(n => j.nodeToJSON(n)))
 }
 
 function runAndSend(text) {
-  let result: Either<string[], string> = run(text)
-  console.log(result)
+  let result: Either<string[], string> = tryCatch<Either<string[], string>>(() => run(text) as Either<string[], string>).mapLeft(e => [e.message]).chain(r => r)
   if(result.isRight()) {
     socket.send(result.value)
     document.getElementById("errors").textContent = "Correct"

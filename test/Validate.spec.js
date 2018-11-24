@@ -7,9 +7,9 @@ const t = require("io-ts");
 describe('Validate', () => {
     it('can be validated', () => {
         let jsonn = JSON.stringify({
-            type: "CHOP",
-            optype: "waveCHOP",
-            params: {}
+            family: "CHOP",
+            type: "waveCHOP",
+            params: []
         });
         const n = src_1.parseJSON(jsonn);
         chai_1.expect(Either_1.isRight(n)).to.be.true;
@@ -17,8 +17,8 @@ describe('Validate', () => {
     });
     it('errors if invalid', () => {
         let jsonn = JSON.stringify({
-            type: "ha",
-            optype: 2,
+            family: "ha",
+            type: 2,
             params: "test"
         });
         const n = src_1.parseJSON(jsonn);
@@ -27,9 +27,9 @@ describe('Validate', () => {
     });
     it('errors if optype doesn\'t exist', () => {
         let jsonn = JSON.stringify({
-            type: "CHOP",
-            optype: "notaCHOP",
-            params: {}
+            family: "CHOP",
+            type: "notaCHOP",
+            params: []
         });
         const n = src_1.parseJSON(jsonn);
         chai_1.expect(Either_1.isLeft(n)).to.be.true;
@@ -37,9 +37,9 @@ describe('Validate', () => {
     });
     it('errors if type is incorrect', () => {
         let jsonn = JSON.stringify({
-            type: "TOP",
-            optype: "waveCHOP",
-            params: {}
+            family: "TOP",
+            type: "waveCHOP",
+            params: []
         });
         const n = src_1.parseJSON(jsonn);
         chai_1.expect(Either_1.isLeft(n)).to.be.true;
@@ -47,8 +47,8 @@ describe('Validate', () => {
     });
     it('can have params', () => {
         let jsonn = JSON.stringify({
-            type: "CHOP",
-            optype: "waveCHOP",
+            family: "CHOP",
+            type: "waveCHOP",
             params: { "rate": { type: "float", value: "1.0" } }
         });
         const n = src_1.parseJSON(jsonn);
@@ -57,8 +57,8 @@ describe('Validate', () => {
     });
     it('errors if param doesn\'t exist', () => {
         let jsonn = JSON.stringify({
-            type: "CHOP",
-            optype: "waveCHOP",
+            family: "CHOP",
+            type: "waveCHOP",
             params: { "notaparam": { type: "string", value: "nope" } }
         });
         const n = src_1.parseJSON(jsonn);
@@ -67,9 +67,9 @@ describe('Validate', () => {
     });
     it('errors if param is the wrong type', () => {
         let jsonn = JSON.stringify({
-            type: "CHOP",
-            optype: "waveCHOP",
-            params: { "rate": { type: "string", value: "1.0" } }
+            family: "CHOP",
+            type: "waveCHOP",
+            params: [{ name:"rate", type: "string", value: ["1.0"] }]
         });
         const n = src_1.parseJSON(jsonn);
         chai_1.expect(Either_1.isLeft(n)).to.be.true;

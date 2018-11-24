@@ -5,9 +5,9 @@
   "scripts": {
     "test": "mocha --require ts-node/register test/**/*.ts",
     "build": "tsc && find ./src -name '*.html' -type f -exec cp {} ./build \\; && find ./src -name '*.js' -type f -exec cp {} ./build \\;",
-    "buildServer": "npm run build && node ./build/Server.js",
+    "buildServer": "gulp && node ./build/Server.js",
     "renamemjs": "rename 's/.js/.mjs/' build/*.js",
-    "runWatch": "npm run build && node ./build/TDOutputWatch.js"
+    "runWatch": "gulp && node ./build/TDOutputWatch.js"
   },
   "author": "",
   "license": "BSD3",
