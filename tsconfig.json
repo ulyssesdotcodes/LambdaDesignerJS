@@ -2,11 +2,13 @@
     "compilerOptions": {
         "target": "es6",
         "module": "commonjs",
+        "esModuleInterop": true,
         "sourceMap": true,
         "resolveJsonModule": true,
         "moduleResolution": "node",
         "rootDir": "src",
-        "outDir": "build/"
+        "outDir": "build/",
+        "allowSyntheticDefaultImports": true
     },
     "exclude": [
         "node_modules",

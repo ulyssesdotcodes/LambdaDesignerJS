@@ -17,7 +17,7 @@ export class OpTree<T extends OP> extends fpt.Tree<INode> {
 }
 
 const op = <T extends OP>(type: OP) => (optype: string, params: { [name: string] : IParam }) : OpTree<T> => {
-  return new OpTree<T>({type: type, optype: optype, params: params, connections: []}, [])
+  return new OpTree<T>({family: type, type: optype, params: params, connections: []}, [])
 }
 
 export const top = op<"TOP">("TOP")

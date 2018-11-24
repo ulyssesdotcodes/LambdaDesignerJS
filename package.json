@@ -4,8 +4,8 @@
   "description": "LambdaDesigner in the browser",
   "scripts": {
     "test": "mocha --require ts-node/register test/**/*.ts",
-    "build": "tsc && find ./src -name '*.js' -type f -exec cp {} ./build \\;",
-    "buildBridge": "npm run build && node ./build/Bridge.js",
+    "build": "tsc && find ./src -name '*.html' -type f -exec cp {} ./build \\; && find ./src -name '*.js' -type f -exec cp {} ./build \\;",
+    "buildServer": "npm run build && node ./build/Server.js",
     "renamemjs": "rename 's/.js/.mjs/' build/*.js",
     "runWatch": "npm run build && node ./build/TDOutputWatch.js"
   },
@@ -14,16 +14,23 @@
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.5",
+    "browserify": "^16.2.3",
     "chai": "^4.2.0",
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^5.0.0-alpha.3",
     "mocha": "^5.2.0",
     "ts-node": "^7.0.1",
-    "typescript": "^3.1.6"
+    "tsify": "^4.0.0",
+    "typescript": "^3.1.6",
+    "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
     "@types/deep-equal": "^1.0.1",
+    "@types/express": "^4.16.0",
     "@types/node": "^10.12.9",
     "@types/socket.io": "^2.1.0",
     "deep-equal": "^1.0.1",
+    "express": "^4.16.4",
     "fp-ts": "^1.10.0",
     "io-ts": "^1.4.1",
     "socket.io": "^2.1.1"
