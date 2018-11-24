@@ -24,8 +24,7 @@ client.connect(5959, 'localhost', function(){
     console.log("connected to TD")
     io.on('connection', function(socket){
         console.log("ws client connected")
-        socket.on('message', (m) => {
-            console.log(m)
+        socket.on('compiled', (m) => {
             client.write(m + "\n")
         })
     })

@@ -19,10 +19,9 @@ function runAndSend(text) {
   } else {
     document.getElementById("errors").textContent = result.value[0]
   }
-  console.log("shit ran")
 }
 
-export class SocketService {
+class SocketService {
   private socket;
 
   public initSocket(): void {
@@ -30,7 +29,7 @@ export class SocketService {
   }
 
   public send(message: string) {
-    this.socket.emit('message', message)
+    this.socket.emit('compiled', message)
   }
 }
 
