@@ -25,8 +25,7 @@ export type ParamType = t.TypeOf<typeof ParamTypes>
 
 export interface IParam<T extends ParamType> {
     type: T,
-    value: Array<string | INode>,
-    name: string | undefined
+    value: Array<string | INode>
 }
 
 export type OP = "TOP" | "CHOP" | "MAT" | "SOP" | "COMP"
@@ -34,13 +33,12 @@ export type OP = "TOP" | "CHOP" | "MAT" | "SOP" | "COMP"
 export interface INode {
     family: OP
     type: string
-    params: Array<IParam<ParamType>>
+    params: { [name: string] : IParam<ParamType> }
     connections: Array<INode>
 }
 
 export const Param : t.RecursiveType<t.Type<IParam<ParamType>>> = t.recursion<IParam<ParamType>>('Param', _ => t.interface({
     type: ParamTypes,
-    name: t.string,
     value: t.array(t.union([t.string, Node]))
 }))
 
@@ -48,7 +46,7 @@ export const Node : t.RecursiveType<t.Type<INode>> = t.recursion<INode>('Node', 
     t.interface({
         family: t.union([t.literal("TOP"), t.literal("CHOP"), t.literal("MAT"), t.literal("SOP"), t.literal("COMP")]),
         type: t.string,
-        params: t.array(Param),
+        params: t.dictionary(t.string, Param),
         connections: t.array(Node)
     }))
 

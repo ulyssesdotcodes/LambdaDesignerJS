@@ -35,7 +35,7 @@ function addNode(nodedict: NodeDict, node: INode) : [string, number] {
     let parsednode: ParsedNode = {
         ty: node.type,
         optype: node.family,
-        parameters: array.reduce(node.params, {}, (acc, p) => addParameter(nodedict, acc, p)),
+        parameters: array.reduce(Object.keys(node.params), {}, (acc, p) => addParameter(nodedict, acc, p, node.params[p])),
         connections: []
     }
     for(let n of node.connections) {
@@ -56,35 +56,35 @@ function addNode(nodedict: NodeDict, node: INode) : [string, number] {
     return [node.type, nodedict[node.type].length - 1];
 }
 
-function addParameter(nodedict: NodeDict, parameters: {[name: string]: string}, param: IParam<ParamType>): {[name: string]: string} {
+function addParameter(nodedict: NodeDict, parameters: {[name: string]: string}, name: string, param: IParam<ParamType>): {[name: string]: string} {
     if(param.type == "CHOP" || param.type == "TOP"|| param.type == "OP"|| param.type == "DAT"|| param.type == "MAT"|| param.type == "SOP") {
         let paramnode = array.reduce(param.value, "", (acc, p) => {
             let addednode = addNode(nodedict, p as INode)
             return acc + " " + addednode[0] + "_" + addednode[1]
         })
-        parameters[param.name] = paramnode
+        parameters[name] ='"' +  paramnode + '"'
         return parameters
     } else if (param.type == "xy") {
-        parameters[param.name + "x"] = param.value[0] as string
-        parameters[param.name + "y"] = param.value[1] as string
+        parameters[name + "x"] = param.value[0] as string
+        parameters[name + "y"] = param.value[1] as string
     } else if (param.type == "uv") {
-        parameters[param.name + "u"] = param.value[0] as string
-        parameters[param.name + "v"] = param.value[1] as string
+        parameters[name + "u"] = param.value[0] as string
+        parameters[name + "v"] = param.value[1] as string
     } else if (param.type == "rgb") {
-        parameters[param.name + "r"] = param.value[0] as string
-        parameters[param.name + "g"] = param.value[1] as string
-        parameters[param.name + "b"] = param.value[2] as string
+        parameters[name + "r"] = param.value[0] as string
+        parameters[name + "g"] = param.value[1] as string
+        parameters[name + "b"] = param.value[2] as string
     } else if (param.type == "xyz") {
-        parameters[param.name + "x"] = param.value[0] as string
-        parameters[param.name + "y"] = param.value[1] as string
-        parameters[param.name + "z"] = param.value[2] as string
+        parameters[name + "x"] = param.value[0] as string
+        parameters[name + "y"] = param.value[1] as string
+        parameters[name + "z"] = param.value[2] as string
     } else if (param.type == "rgba") {
-        parameters[param.name + "r"] = param.value[0] as string
-        parameters[param.name + "g"] = param.value[1] as string
-        parameters[param.name + "b"] = param.value[2] as string
-        parameters[param.name + "a"] = param.value[3] as string
+        parameters[name + "r"] = param.value[0] as string
+        parameters[name + "g"] = param.value[1] as string
+        parameters[name + "b"] = param.value[2] as string
+        parameters[name + "a"] = param.value[3] as string
     } else {
-        parameters[param.name] = param.value[0] as string
+        parameters[name] = param.value[0] as string
     }
     return parameters
 }

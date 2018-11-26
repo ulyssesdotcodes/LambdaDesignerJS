@@ -6,7 +6,7 @@ describe('JSON', () => {
         const n : INode = {
             family: "CHOP",
             type: "waveCHOP",
-            params: [],
+            params: {},
             connections: []
         }
         let parsed = nodeToJSON(n);
@@ -16,7 +16,7 @@ describe('JSON', () => {
         const n: INode = {
             family: "CHOP",
             type: "waveCHOP",
-            params: [{name: "rate", type: "float", value: ["1.0"] }],
+            params: {"rate": { type: "float", value: ["1.0"] }},
             connections: []
         }
 
@@ -28,7 +28,7 @@ describe('JSON', () => {
         const n: INode = {
             family: "TOP",
             type: "rectangleTOP",
-            params: [{name: "size", type: "xy", value: ["0.5", "0.75"] }],
+            params: {"size": {type: "xy", value: ["0.5", "0.75"] }},
             connections: []
         }
 
@@ -40,19 +40,19 @@ describe('JSON', () => {
         const c1: INode = {
             family: "CHOP",
             type: "waveCHOP",
-            params: [{name:"rate", type: "float", value: ["1.0"] }],
+            params: {"rate": { type: "float", value: ["1.0"] }},
             connections: []
         }
         const c2: INode = {
             family: "CHOP",
             type: "waveCHOP",
-            params: [{name: "rate", type: "float", value: ["1.0"] }],
+            params: {"rate": { type: "float", value: ["1.0"] }},
             connections: []
         }
         const n: INode = {
             family: "CHOP",
             type: "mathCHOP",
-            params: [],
+            params: {},
             connections: [c1, c2]
         }
 
@@ -63,13 +63,13 @@ describe('JSON', () => {
         const c1: INode = {
             family: "CHOP",
             type: "waveCHOP",
-            params: [{name: "rate", type: "float", value: ["1.0"] }],
+            params: {"rate": { type: "float", value: ["1.0"] }},
             connections: []
         }
         const n: INode = {
             family: "CHOP",
             type: "selectCHOP",
-            params: [{name: "chop", type: "CHOP", value: [c1]}],
+            params: {"chop": { type: "CHOP", value: [c1]}},
             connections: []
         }
 

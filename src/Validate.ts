@@ -28,12 +28,12 @@ export function testConnection(type: string, family: string, connection:INode) :
     return connection.family == family ? validateNode(connection) : left(["expected '" + family + "' as '" + type + "' child but got '" + connection.family + "'"])
 }
  
-export function testParams(type: string, params: Array<IParam<ParamType>>) : Either<string[], {[name: string] : any}> {
-    for(let param of params) {
-        if(!(param.name in parsedops[type].pars)){
-            return left(["param '" + param.name +"' does not exist for type '" + type + "'"])
-        } else if(param.type != parsedops[type].pars[param.name].type) {
-            return left(["param type is not correct for '" + type +"." + param.name + "'"])
+export function testParams(type: string, params: {[name: string] : IParam<ParamType> }) : Either<string[], {[name: string] : any}> {
+    for(let param in params) {
+        if(!(param in parsedops[type].pars)){
+            return left(["param '" + param +"' does not exist for type '" + type + "'"])
+        } else if(params[param].type != parsedops[type].pars[param].type) {
+            return left(["param type is not correct for '" + type +"." + param + "'"])
         } 
     }
 

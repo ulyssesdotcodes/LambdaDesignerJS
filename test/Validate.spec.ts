@@ -13,7 +13,7 @@ describe('Validate', () => {
         let jsonn = JSON.stringify({
             family: "CHOP",
             type: "waveCHOP",
-            params: [],
+            params: {},
             connections: []
         })
         const n = parseJSON(jsonn)
@@ -33,7 +33,7 @@ describe('Validate', () => {
         let jsonn = JSON.stringify({
             family: "CHOP",
             type: "notaCHOP",
-            params: [],
+            params: {},
             connections: []
         })
         const n = parseJSON(jsonn)
@@ -42,7 +42,7 @@ describe('Validate', () => {
         let jsonn = JSON.stringify({
             family: "TOP",
             type: "waveCHOP",
-            params: [],
+            params: {},
             connections: []
         })
         const n = parseJSON(jsonn)
@@ -52,27 +52,27 @@ describe('Validate', () => {
         let jsonn = JSON.stringify({
             family: "CHOP",
             type: "waveCHOP",
-            params: [{name: "rate", type: "float", value: ["1.0"]}],
+            params: {"rate" : { type: "float", value: ["1.0"]}},
             connections: []
         })
         const n = parseJSON(jsonn)
-        expect(n.map(n => n.params[0].value[0]).fold<any>(t.identity, t.identity)).to.equal("1.0")
+        expect(n.map(n => n.params["rate"].value[0]).fold<any>(t.identity, t.identity)).to.equal("1.0")
     });
     it('can have multivalue params', ()=> {
         let jsonn = JSON.stringify({
             family: "TOP",
             type: "rectangleTOP",
-            params: [{name: "size", type: "xy", value: ["0.5", "0.75"]}],
+            params: {"size": { type: "xy", value: ["0.5", "0.75"]}},
             connections: []
         })
         const n = parseJSON(jsonn)
-        expect(n.map(n => n.params[0].value[1]).fold<any>(t.identity, t.identity)).to.equal("0.75")
+        expect(n.map(n => n.params["size"].value[1]).fold<any>(t.identity, t.identity)).to.equal("0.75")
     });
     it('errors if param doesn\'t exist', () =>{
         let jsonn = JSON.stringify({
             family: "CHOP",
             type: "waveCHOP",
-            params: [{name:"notaparam", type: "string", value: ["nope"] }],
+            params: {"notaparam": {type: "string", value: ["nope"] }},
             connections: []
         })
         const n = parseJSON(jsonn)
@@ -82,7 +82,7 @@ describe('Validate', () => {
         let jsonn = JSON.stringify({
             family: "CHOP",
             type: "waveCHOP",
-            params: [{name:"rate", type: "string", value: ["1.0"]} ],
+            params: {"rate": { type: "string", value: ["1.0"]} } ,
             connections: []
         })
         const n = parseJSON(jsonn)
@@ -92,25 +92,25 @@ describe('Validate', () => {
         let child = {
             family: "TOP",
             type: "rectangleTOP",
-            params: [],
+            params: {},
             connections: []
         }
         let child2 = {
             family: "TOP",
             type: "circleTOP",
-            params: [],
+            params: {},
             connections: []
         }
         let comp = {
             family: "TOP",
             type: "compositeTOP",
-            params: [ {name: "operand", type: "menu", value: ["31"]} ],
+            params: { "operand": { type: "menu", value: ["31"]} },
             connections: [child, child2]
         }
         let jsonn = JSON.stringify({
             family: "TOP",
             type: "blurTOP",
-            params: [],
+            params: {},
             connections: [comp ]
         })
         const n = parseJSON(jsonn)
@@ -120,18 +120,18 @@ describe('Validate', () => {
         let child = {
             family: "TOP",
             type: "waveTOP",
-            params: []
+            params: {}
         }
         let child2 = {
             family: "TOP",
             type: "waveTOP",
-            params: [],
+            params: {},
             connections: [child]
         }
         let jsonn = JSON.stringify({
             family: "CHOP",
             type: "waveCHOP",
-            params: [],
+            params: {},
             connections: [child2]
         })
         const n = parseJSON(jsonn)
@@ -141,13 +141,13 @@ describe('Validate', () => {
         let child = {
             family: "TOP",
             type: "blurTOP",
-            params: [],
+            params: {},
             connections: []
         }
         let jsonn = JSON.stringify({
             family: "CHOP",
             type: "waveCHOP",
-            params: [],
+            params: {},
             connections: [child]
         })
         const n = parseJSON(jsonn)
@@ -157,19 +157,19 @@ describe('Validate', () => {
         let child = {
             family: "CHOP",
             type: "waveCHOP",
-            params: [],
+            params: {},
             connections: []
         }
         let child2 = {
             family: "TOP",
             type: "blurTOP",
-            params: [],
+            params: {},
             connections: []
         }
         let jsonn = JSON.stringify({
             family: "CHOP",
             type: "waveCHOP",
-            params: [{name: "rate", type: "string", value: ["1.0"]}],
+            params: {"rate": { type: "string", value: ["1.0"]}},
             connections: [child, child2]
         })
         const n = parseJSON(jsonn)
@@ -179,13 +179,13 @@ describe('Validate', () => {
         let child = {
             family: "CHOP",
             type: "waveCHOP",
-            params: [],
+            params: {},
             connections: []
         }
         let jsonn = JSON.stringify({
             family: "CHOP",
             type: "waveCHOP",
-            params: [],
+            params: {},
             connections: [child]
         })
         const n = parseJSON(jsonn)
