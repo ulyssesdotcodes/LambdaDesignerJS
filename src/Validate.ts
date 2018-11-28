@@ -1,4 +1,4 @@
-import { Node, INode, IParam, ParamType } from './Types'
+import { INode, IParamAny, IParam, ParamType } from './Types'
 import { Either, left, right, tryCatch } from 'fp-ts/lib/Either'
 import { Errors, Validation } from 'io-ts'
 import * as parsedops from './parsedjs.json'
@@ -12,7 +12,7 @@ export function parseJSON(data: string) : Either<string[], INode> {
 }
 
 export function validateNode(node: INode) : Either<string[], INode> {
-    return Node.decode(node)
+    return right<Errors, INode>(node)
             .mapLeft<string[]>(n => PathReporter.report(left(n)))
             .chain<INode>(n => n.type in parsedops ? right(n) : left(["type '" + n.type + "' does not exist"]))
             .chain<INode>(n => parsedops[n.type].type == n.family ? right(n) : left(["type '" + n.family + "' is not correct for '" + n.type + "'"]))
@@ -28,14 +28,19 @@ export function testConnection(type: string, family: string, connection:INode) :
     return connection.family == family ? validateNode(connection) : left(["expected '" + family + "' as '" + type + "' child but got '" + connection.family + "'"])
 }
  
-export function testParams(type: string, params: {[name: string] : IParam<ParamType> }) : Either<string[], {[name: string] : any}> {
-    for(let param in params) {
-        if(!(param in parsedops[type].pars)){
-            return left(["param '" + param +"' does not exist for type '" + type + "'"])
-        } else if(params[param].type != parsedops[type].pars[param].type) {
-            return left(["param type is not correct for '" + type +"." + param + "'"])
-        } 
-    }
+export function testParams(type: string, params: {[name: string] : IParamAny }) : Either<string[], {[name: string] : any}> {
+    return fpa.array.reduce(Object.keys(params), right(params), (acc, p) => 
+        acc.chain(c => testParam(type, p, params[p]).map(_ => c))
+    )
+}
 
-    return right(params)
+function testParam(type: string, name: string, param: IParamAny): Either<string[], IParamAny> {
+    return right<string[], IParamAny>(param)
+        .chain(p => (name in parsedops[type].pars) ? 
+            right<string[], IParamAny>(p) : left<string[], IParamAny>(["param '" + name +"' does not exist for type '" + type + "'"])
+        )
+        .chain(p => param.type !== parsedops[type].pars[name].type ? 
+            left<string[], IParamAny>(["param type is not correct for '" + type +"." + name + "'"]) : right<string[], IParamAny>(p)
+        )
+        .chain(p => fpa.array.reduce(p.value0, right(p), (acc, b) => acc.chain(c => typeof b === "string" ? right(p) : validateNode(b as INode).map(_ => c))))
 }

@@ -1,8 +1,9 @@
-import { INode, IParam, OP, ParamType } from './Types'
+import { INode, IParamAny, IParam, OP, ParamType } from './Types'
 import { option, none, isNone } from 'fp-ts/lib/Option'
 import { StrMap, strmap } from 'fp-ts/lib/StrMap'
 import { array } from 'fp-ts/lib/Array'
 import deepEqual from 'deep-equal'
+import { isString } from 'util';
 
 interface ParsedNode {
     optype: OP,
@@ -44,7 +45,7 @@ function addNode(nodedict: NodeDict, node: INode) : [string, number] {
     }
     if(node.type in nodedict) {
         let nodes = nodedict[node.type];
-        let foundnode = nodes.reduce((acc, n, idx) => isNone(acc) && deepEqual(n, parsednode) ? none : option.of(idx), none )
+        let foundnode = nodes.reduce((acc, n, idx) => isNone(acc) && deepEqual(n, parsednode) ? option.of(idx) : none, none )
         if(foundnode.isSome()) {
             return [node.type, foundnode.value]
         }
@@ -56,35 +57,40 @@ function addNode(nodedict: NodeDict, node: INode) : [string, number] {
     return [node.type, nodedict[node.type].length - 1];
 }
 
-function addParameter(nodedict: NodeDict, parameters: {[name: string]: string}, name: string, param: IParam<ParamType>): {[name: string]: string} {
-    if(param.type == "CHOP" || param.type == "TOP"|| param.type == "OP"|| param.type == "DAT"|| param.type == "MAT"|| param.type == "SOP") {
-        let paramnode = array.reduce(param.value, "", (acc, p) => {
-            let addednode = addNode(nodedict, p as INode)
-            return acc + " " + addednode[0] + "_" + addednode[1]
-        })
-        parameters[name] ='"' +  paramnode + '"'
-        return parameters
-    } else if (param.type == "xy") {
-        parameters[name + "x"] = param.value[0] as string
-        parameters[name + "y"] = param.value[1] as string
+function addParameter(nodedict: NodeDict, parameters: {[name: string]: string},
+     name: string, param: IParamAny): {[name: string]: string} {
+    if (param.type == "xy") {
+        parameters[name + "x"] = parseParamValue(nodedict, param.value0)
+        parameters[name + "y"] = parseParamValue(nodedict, param.value1)
     } else if (param.type == "uv") {
-        parameters[name + "u"] = param.value[0] as string
-        parameters[name + "v"] = param.value[1] as string
+        parameters[name + "u"] = parseParamValue(nodedict, param.value0)
+        parameters[name + "v"] = parseParamValue(nodedict, param.value1)
     } else if (param.type == "rgb") {
-        parameters[name + "r"] = param.value[0] as string
-        parameters[name + "g"] = param.value[1] as string
-        parameters[name + "b"] = param.value[2] as string
+        parameters[name + "r"] = parseParamValue(nodedict, param.value0)
+        parameters[name + "g"] = parseParamValue(nodedict, param.value1)
+        parameters[name + "b"] = parseParamValue(nodedict, param.value2)
     } else if (param.type == "xyz") {
-        parameters[name + "x"] = param.value[0] as string
-        parameters[name + "y"] = param.value[1] as string
-        parameters[name + "z"] = param.value[2] as string
+        parameters[name + "x"] = parseParamValue(nodedict, param.value0)
+        parameters[name + "y"] = parseParamValue(nodedict, param.value1)
+        parameters[name + "z"] = parseParamValue(nodedict, param.value2)
     } else if (param.type == "rgba") {
-        parameters[name + "r"] = param.value[0] as string
-        parameters[name + "g"] = param.value[1] as string
-        parameters[name + "b"] = param.value[2] as string
-        parameters[name + "a"] = param.value[3] as string
+        parameters[name + "r"] = parseParamValue(nodedict, param.value0)
+        parameters[name + "g"] = parseParamValue(nodedict, param.value1)
+        parameters[name + "b"] = parseParamValue(nodedict, param.value2)
+        parameters[name + "a"] = parseParamValue(nodedict, param.value3)
     } else {
-        parameters[name] = param.value[0] as string
+        parameters[name] = parseParamValue(nodedict, param.value0);
     }
     return parameters
+}
+
+function parseParamValue(nodedict: NodeDict, value: Array<string | INode>) {
+    return array.reduce<string | INode, string>(value, "", (acc, p) => {
+        if (isString(p)) {
+            return acc + p;
+        } else {
+            let addednode = addNode(nodedict, p as INode)
+            return acc + addednode[0] + "_" + addednode[1]
+        }
+    })
 }

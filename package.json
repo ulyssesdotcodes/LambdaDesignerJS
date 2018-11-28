@@ -2,7 +2,9 @@
   "name": "lambdadesignerjs",
   "version": "1.0.0",
   "description": "LambdaDesigner in the browser",
-  "files":["build"],
+  "files": [
+    "build"
+  ],
   "main": "build/index.js",
   "scripts": {
     "test": "mocha --require ts-node/register test/**/*.ts",
@@ -28,7 +30,6 @@
   },
   "dependencies": {
     "@types/deep-equal": "^1.0.1",
-    "@types/express": "^4.16.0",
     "@types/node": "^10.12.9",
     "@types/socket.io": "^2.1.0",
     "deep-equal": "^1.0.1",

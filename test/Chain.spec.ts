@@ -26,10 +26,36 @@ describe('Chain', () =>  {
   })
   it('can make params', () => {
     const n = chain.chop("wave",{"rate" : chain.fp(1)}).out()
-    expect(n).to.eql({ family: "CHOP", type: "waveCHOP", params: {"rate": { type: "float", value: ["1"]}}, connections:[]})
+    expect(n).to.eql({ family: "CHOP", type: "waveCHOP", params: {"rate": { type: "float", value0: ["1"]}}, connections:[]})
   })
   it('can make xy params', () => {
-    const n = chain.top("rectangle", {"size" : chain.xyp([chain.fp(0.5), chain.fp(0.5)])}).out()
-    expect(n).to.eql({ family: "TOP", type: "rectangleTOP", params: {"size": { type: "xy", value: ["0.5", "0.5"]}}, connections:[]})
+    const n = chain.top("rectangle", {"size" : chain.xyp(chain.fp(0.5), chain.fp(0.5))}).out()
+    expect(n).to.eql({ family: "TOP", type: "rectangleTOP", params: {"size": { type: "xy", value0: ["0.5"], value1:["0.5"]}}, connections:[]})
+  })
+  it('can make node params', () => {
+    const n = chain.chop("select", {"chop" : chain.chopp(chain.chop("wave",{"rate" : chain.fp(1)}))}).out()
+    let c1 = { family: "CHOP", type: "waveCHOP", params: {"rate": { type: "float", value0: ["1"]}}, connections:[]}
+    expect(n).to.eql({ family: "CHOP", type: "selectCHOP", params: {"chop": { type: "CHOP", value0: ['\"', c1, '\"']}}, connections:[]})
+  })
+  it('can make op channel params', () => {
+    const n = chain.chop("wave",{"rate" : chain.chan(chain.ip(0), chain.chope("wave"))}).out()
+    let c1 = { family: "CHOP", type: "waveCHOP", params: {}, connections:[]}
+    expect(n).to.eql({ family: "CHOP", type: "waveCHOP", params: {"rate": { type: "float", value0: ["op(\"", c1, "\")[", "0", "]"]}}, connections:[]})
+  })
+  it('can make string op channel params', () => {
+    const n = chain.chop("wave",{"rate" : chain.chan(chain.sp("wah"), chain.chope("wave"))}).out()
+    let c1 = { family: "CHOP", type: "waveCHOP", params: {}, connections:[]}
+    expect(n).to.eql({ family: "CHOP", type: "waveCHOP", params: {"rate": { type: "float", value0: ["op(\"", c1, "\")[", '"wah"', "]"]}}, connections:[]})
+  })
+  it('can make chain multivalue params', () => {
+    const c1 = chain.chop("wave", {})
+    const n = chain.top("rectangle", {"size": chain.xyp(chain.chan(chain.ip(0), c1), chain.fp(0.2))}).out()
+    let c1o = { family: "CHOP", type: "waveCHOP", params: {}, connections:[]}
+    expect(n).to.eql({ family: "TOP", type: "rectangleTOP", params: {"size": { type: "xy", value0: ["op(\"", c1o, "\")[", "0", "]"], value1: ["0.2"]}}, connections:[]})
+  })
+  it('can operate on params', () => {
+    const n = chain.chop("wave",{"rate" : chain.multp(chain.chan(chain.ip(0), chain.chope("wave")), chain.fp(1))}).out()
+    let c1 = { family: "CHOP", type: "waveCHOP", params: {}, connections:[]}
+    expect(n).to.eql({ family: "CHOP", type: "waveCHOP", params: {"rate": { type: "float", value0: ["( ", "op(\"", c1, "\")[", "0", "]", " * ", "1", " )"]}}, connections:[]})
   })
 })
