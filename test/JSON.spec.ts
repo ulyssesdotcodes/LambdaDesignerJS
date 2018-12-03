@@ -1,5 +1,6 @@
 import { expect } from 'chai';
-import { INode, nodeToJSON } from '../src'
+import { OP, INode, nodeToJSON, FBNode, FBTargetNode } from '../src'
+import { Guid } from 'guid-typescript'
 
 describe('JSON', () => {
     it('can parse a single node', ()=> {
@@ -132,5 +133,168 @@ describe('JSON', () => {
 
         let parsed = nodeToJSON(n);
         expect(parsed).to.equal("{\"/waveCHOP_0\":{\"ty\":\"waveCHOP\",\"optype\":\"CHOP\",\"parameters\":{},\"connections\":[]},\"/rectangleTOP_0\":{\"ty\":\"rectangleTOP\",\"optype\":\"TOP\",\"parameters\":{\"sizex\":\"op(\\\"waveCHOP_0\\\")[0]\",\"sizey\":\"0.2\"},\"connections\":[]}}")
+    })
+    it('can parse feedback', () => {
+        let guid = Guid.create()
+        const n : INode = { family: "TOP", type: "blurTOP", params: {}, connections:[ 
+            {
+                special: "FBT",
+                family: "TOP",
+                type: "compositeTOP",
+                selects: [guid],
+                params: {},
+                connections:[
+                {family: "TOP", type: "levelTOP", params: {}, connections: [
+                    { special: "FB", family: "TOP", type: "feedbackTOP", id: guid, params: {}, connections:[
+                    {family: "TOP", type: "rectangleTOP", params: {}, connections: []}
+                    ]} as FBNode
+                ]},
+                { special: "FB", family: "TOP", type: "feedbackTOP", id: guid, params: {}, connections:[
+                    {family: "TOP", type: "rectangleTOP", params: {}, connections: []}
+                    ]} as FBNode
+                ],
+            } as FBTargetNode] as INode[]}
+
+        expect(nodeToJSON(n)).to.equal(JSON.stringify({
+            "/rectangleTOP_0": {
+                ty: "rectangleTOP",
+                optype: "TOP",
+                parameters: {},
+                connections: []
+            },
+            "/feedbackTOP_0": {
+                ty: "feedbackTOP",
+                optype:"TOP",
+                parameters: {"top": '"compositeTOP_0"'},
+                connections: ["/rectangleTOP_0"]
+            },
+            "/levelTOP_0": {
+                ty: "levelTOP",
+                optype:"TOP",
+                parameters: {},
+                connections: ["/feedbackTOP_0"]
+            },
+            "/compositeTOP_0": {
+                ty: "compositeTOP",
+                optype:"TOP",
+                parameters: {},
+                connections: ["/levelTOP_0", "/feedbackTOP_0"]
+            },
+            "/blurTOP_0": {
+                ty: "blurTOP",
+                optype:"TOP",
+                parameters: {},
+                connections: ["/compositeTOP_0"]
+            }
+        }))
+
+    })
+    it('can parse multi feedback', () => {
+        let guid = Guid.create()
+        let guid2 = Guid.create()
+        const n : INode =  {family: "TOP", type: "compositeTOP", params: {}, connections: [
+            { family: "TOP", type: "blurTOP", params: {}, connections:[ 
+                {
+                special: "FBT",
+                family: "TOP",
+                type: "compositeTOP",
+                selects: [guid],
+                params: {},
+                connections:[
+                    {family: "TOP", type: "levelTOP", params: {}, connections: [
+                    { special: "FB", family: "TOP", type: "feedbackTOP", id: guid, params: {}, connections:[
+                        {family: "TOP", type: "rectangleTOP", params: {}, connections: []}
+                    ]} as FBNode
+                    ]},
+                    { special: "FB", family: "TOP", type: "feedbackTOP", id: guid, params: {}, connections:[
+                        {family: "TOP", type: "rectangleTOP", params: {}, connections: []}
+                    ]} as FBNode
+                ],
+                } as FBTargetNode
+            ]},
+            { family: "TOP", type: "blurTOP", params: {}, connections:[ 
+            {
+                special: "FBT",
+                family: "TOP",
+                type: "compositeTOP",
+                selects: [guid2],
+                params: {},
+                connections:[
+                {family: "TOP", type: "levelTOP", params: {}, connections: [
+                    { special: "FB", family: "TOP", type: "feedbackTOP", id: guid2, params: {}, connections:[
+                    {family: "TOP", type: "rectangleTOP", params: {}, connections: []}
+                    ]} as FBNode
+                ]},
+                { special: "FB", family: "TOP", type: "feedbackTOP", id: guid2, params: {}, connections:[
+                    {family: "TOP", type: "rectangleTOP", params: {}, connections: []}
+                    ]} as FBNode
+                ]
+            } as FBTargetNode
+            ]}
+            ]}
+
+        expect(nodeToJSON(n)).to.equal(JSON.stringify({
+            "/rectangleTOP_0": {
+                ty: "rectangleTOP",
+                optype: "TOP",
+                parameters: {},
+                connections: []
+            },
+            "/feedbackTOP_0": {
+                ty: "feedbackTOP",
+                optype:"TOP",
+                parameters: {"top": '"compositeTOP_0"'},
+                connections: ["/rectangleTOP_0"]
+            },
+            "/feedbackTOP_1": {
+                ty: "feedbackTOP",
+                optype:"TOP",
+                parameters: {"top": '"compositeTOP_1"'},
+                connections: ["/rectangleTOP_0"]
+            },
+            "/levelTOP_0": {
+                ty: "levelTOP",
+                optype:"TOP",
+                parameters: {},
+                connections: ["/feedbackTOP_0"]
+            },
+            "/levelTOP_1": {
+                ty: "levelTOP",
+                optype:"TOP",
+                parameters: {},
+                connections: ["/feedbackTOP_1"]
+            },
+            "/compositeTOP_0": {
+                ty: "compositeTOP",
+                optype:"TOP",
+                parameters: {},
+                connections: ["/levelTOP_0", "/feedbackTOP_0"]
+            },
+            "/compositeTOP_1": {
+                ty: "compositeTOP",
+                optype:"TOP",
+                parameters: {},
+                connections: ["/levelTOP_1", "/feedbackTOP_1"]
+            },
+            "/compositeTOP_2": {
+                ty: "compositeTOP",
+                optype:"TOP",
+                parameters: {},
+                connections: ["/blurTOP_0", "/blurTOP_1"]
+            },
+            "/blurTOP_0": {
+                ty: "blurTOP",
+                optype:"TOP",
+                parameters: {},
+                connections: ["/compositeTOP_0"]
+            },
+            "/blurTOP_1": {
+                ty: "blurTOP",
+                optype:"TOP",
+                parameters: {},
+                connections: ["/compositeTOP_1"]
+            }
+        }))
+
     })
 })

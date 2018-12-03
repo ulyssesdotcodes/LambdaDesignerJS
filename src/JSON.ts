@@ -1,15 +1,18 @@
-import { INode, IParamAny, IParam, OP, ParamType } from './Types'
+import { FBNode, FBTargetNode, INode, IParamAny, IParam, OP, ParamType } from './Types'
 import { option, none, isNone } from 'fp-ts/lib/Option'
 import { StrMap, strmap } from 'fp-ts/lib/StrMap'
 import { array } from 'fp-ts/lib/Array'
 import deepEqual from 'deep-equal'
 import { isString } from 'util';
+import { Guid } from 'guid-typescript'
 
 interface ParsedNode {
     optype: OP,
     ty: string,
     parameters: {[name: string] : string },
-    connections: Array<string>
+    connections: Array<string>,
+    fbid?: Guid
+    text?: string
 }
 
 type NodeDict = { [optype: string] : Array<ParsedNode>}
@@ -32,6 +35,14 @@ export function nodeToJSON(node: INode) : string {
     return nodedictout(nodedict);
 }
 
+function instanceofFBTargetNode(node: INode): node is FBTargetNode {
+    return 'selects' in node;
+}
+
+function instanceofFBNode(node: INode): node is FBNode {
+    return 'id' in node;
+}
+
 function addNode(nodedict: NodeDict, node: INode) : [string, number] {
     let parsednode: ParsedNode = {
         ty: node.type,
@@ -39,22 +50,46 @@ function addNode(nodedict: NodeDict, node: INode) : [string, number] {
         parameters: array.reduce(Object.keys(node.params), {}, (acc, p) => addParameter(nodedict, acc, p, node.params[p])),
         connections: []
     }
+
+    if(instanceofFBNode(node)) {
+        parsednode.fbid = node.id
+    }
+
     for(let n of node.connections) {
         let child = addNode(nodedict, n)
         parsednode.connections.push("/" + child[0] + "_" + child[1])
     }
-    if(node.type in nodedict) {
-        let nodes = nodedict[node.type];
-        let foundnode = nodes.reduce((acc, n, idx) => isNone(acc) && deepEqual(n, parsednode) ? option.of(idx) : none, none )
-        if(foundnode.isSome()) {
-            return [node.type, foundnode.value]
+
+    placeInNodeDict(nodedict, parsednode)
+
+    let output : [string, number]= [node.type, nodedict[node.type].length - 1]
+
+    if (instanceofFBTargetNode(node)) {
+        for(let fbn of nodedict["feedback" + node.family]) {
+            for(let id of node.selects) {
+                if(fbn.fbid !== undefined && fbn.fbid.equals(id)) {
+                    fbn.parameters["top"] = '"' + output[0] + "_" + output[1] + '"'
+                    fbn.fbid = undefined
+                }
+            }
         }
-    } else {
-        nodedict[node.type] = []
     }
 
-    nodedict[node.type].push(parsednode)
-    return [node.type, nodedict[node.type].length - 1];
+    return output;
+}
+
+function placeInNodeDict(nodedict: NodeDict, node: ParsedNode) {
+    if(node.ty in nodedict) {
+        let nodes = nodedict[node.ty];
+        let foundnode = nodes.reduce((acc, n, idx) => isNone(acc) && deepEqual(n, node) ? option.of(idx) : none, none )
+        if(foundnode.isSome()) {
+            return [node.ty, foundnode.value]
+        }
+    } else {
+        nodedict[node.ty] = []
+    }
+
+    nodedict[node.ty].push(node)
 }
 
 function addParameter(nodedict: NodeDict, parameters: {[name: string]: string},
@@ -73,6 +108,11 @@ function addParameter(nodedict: NodeDict, parameters: {[name: string]: string},
         parameters[name + "x"] = parseParamValue(nodedict, param.value0)
         parameters[name + "y"] = parseParamValue(nodedict, param.value1)
         parameters[name + "z"] = parseParamValue(nodedict, param.value2)
+    } else if (param.type == "xyzw") {
+        parameters[name + "x"] = parseParamValue(nodedict, param.value0)
+        parameters[name + "y"] = parseParamValue(nodedict, param.value1)
+        parameters[name + "z"] = parseParamValue(nodedict, param.value2)
+        parameters[name + "w"] = parseParamValue(nodedict, param.value3)
     } else if (param.type == "rgba") {
         parameters[name + "r"] = parseParamValue(nodedict, param.value0)
         parameters[name + "g"] = parseParamValue(nodedict, param.value1)
@@ -84,13 +124,14 @@ function addParameter(nodedict: NodeDict, parameters: {[name: string]: string},
     return parameters
 }
 
-function parseParamValue(nodedict: NodeDict, value: Array<string | INode>) {
-    return array.reduce<string | INode, string>(value, "", (acc, p) => {
+function parseParamValue(nodedict: NodeDict, value: Array<string | INode>) : string | undefined {
+    let val = array.reduce<string | INode, string | undefined>(value, "", (acc, p) => {
         if (isString(p)) {
             return acc + p;
         } else {
             let addednode = addNode(nodedict, p as INode)
             return acc + addednode[0] + "_" + addednode[1]
         }
-    })
+    });
+    return val == "" ? undefined : val;
 }

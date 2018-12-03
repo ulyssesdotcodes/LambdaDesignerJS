@@ -3,6 +3,7 @@ import { validateNode } from '../src/Validate'
 import * as chain from '../src/Chain'
 import * as t from 'io-ts'
 import { isLeft, isRight } from 'fp-ts/lib/Either';
+import { FBNode, FBTargetNode } from '../src/Types'
 
 describe('Chain', () =>  {
   it('can make node', () => {
@@ -14,7 +15,7 @@ describe('Chain', () =>  {
     expect(n).to.eql({ family: "CHOP", type: "audiodevinCHOP", params: {}, connections:[{ family: "CHOP", type: "waveCHOP", params: {}, connections: []}]})
   })
   it('errors if js is invalid', () =>{
-    let r = Function('return (function(validate, c){ return validate(c.tope("nope").connect(c.chope("math")).out()) })')()(
+    let r = Function('return (function(validate, c){ return validate(c.tope("nope").addConnect(c.chope("math")).out()) })')()(
       (n) => validateNode(n).fold<any>(t.identity, t.identity), chain
       ) as any
     expect(r).to.eql(["expected 'CHOP' as 'mathCHOP' child but got 'TOP'"])
@@ -57,5 +58,95 @@ describe('Chain', () =>  {
     const n = chain.chop("wave",{"rate" : chain.multp(chain.chan(chain.ip(0), chain.chope("wave")), chain.fp(1))}).out()
     let c1 = { family: "CHOP", type: "waveCHOP", params: {}, connections:[]}
     expect(n).to.eql({ family: "CHOP", type: "waveCHOP", params: {"rate": { type: "float", value0: ["( ", "op(\"", c1, "\")[", "0", "]", " * ", "1", " )"]}}, connections:[]})
+  })
+  it('can make feedback ops', () => {
+    let fbt = chain.feedbacktop()
+    let n = chain.tope("rectangle")
+      .connect(fbt)
+      .addConnect(fbt.connect(chain.tope("level")).connect(chain.feedbacktarget((fbt.value as FBNode).id, "composite", {})))
+      .connect(chain.tope("blur"))
+      .out()
+
+    let guid = (n.connections[0] as FBTargetNode).selects[0]
+
+    expect(n).to.eql({ family: "TOP", type: "blurTOP", params: {}, connections:[ 
+      {
+        special: "FBT",
+        family: "TOP",
+        type: "compositeTOP",
+        selects: [guid],
+        params: {},
+        connections:[
+          {family: "TOP", type: "levelTOP", params: {}, connections: [
+            { special: "FB", family: "TOP", type: "feedbackTOP", id: guid, params: {}, connections:[
+              {family: "TOP", type: "rectangleTOP", params: {}, connections: []}
+            ]}
+          ]},
+          { special: "FB", family: "TOP", type: "feedbackTOP", id: guid, params: {}, connections:[
+              {family: "TOP", type: "rectangleTOP", params: {}, connections: []}
+            ]}
+        ],
+      }
+    ]})
+  })
+  it('can make multi feedback ops', () => {
+    let fbt = chain.feedbacktop()
+    let fbt2 = chain.feedbacktop()
+    let n = chain.tope("rectangle")
+      .connect(fbt)
+      .addConnect(fbt.connect(chain.tope("level")).connect(chain.feedbacktarget((fbt.value as FBNode).id, "composite", {})))
+      .connect(chain.tope("blur"))
+      .addConnect(
+        chain.tope("rectangle")
+          .connect(fbt2)
+          .addConnect(fbt2.connect(chain.tope("level")).connect(chain.feedbacktarget((fbt2.value as FBNode).id, "composite", {})))
+          .connect(chain.tope("blur"))
+          .connect(chain.tope("composite"))
+      )
+      .out()
+
+    let guid = (n.connections[0].connections[0] as FBTargetNode).selects[0]
+    let guid2 = (n.connections[1].connections[0] as FBTargetNode).selects[0]
+
+    expect(n).to.eql({ family: "TOP", type: "compositeTOP", params: {}, connections: [
+      { family: "TOP", type: "blurTOP", params: {}, connections:[ 
+        {
+          special: "FBT",
+          family: "TOP",
+          type: "compositeTOP",
+          selects: [guid],
+          params: {},
+          connections:[
+            {family: "TOP", type: "levelTOP", params: {}, connections: [
+              { special: "FB", family: "TOP", type: "feedbackTOP", id: guid, params: {}, connections:[
+                {family: "TOP", type: "rectangleTOP", params: {}, connections: []}
+              ]}
+            ]},
+            { special: "FB", family: "TOP", type: "feedbackTOP", id: guid, params: {}, connections:[
+                {family: "TOP", type: "rectangleTOP", params: {}, connections: []}
+              ]}
+          ],
+        }
+      ]},
+    { family: "TOP", type: "blurTOP", params: {}, connections:[ 
+      {
+        special: "FBT",
+        family: "TOP",
+        type: "compositeTOP",
+        selects: [guid2],
+        params: {},
+        connections:[
+          {family: "TOP", type: "levelTOP", params: {}, connections: [
+            { special: "FB", family: "TOP", type: "feedbackTOP", id: guid2, params: {}, connections:[
+              {family: "TOP", type: "rectangleTOP", params: {}, connections: []}
+            ]}
+          ]},
+          { special: "FB", family: "TOP", type: "feedbackTOP", id: guid2, params: {}, connections:[
+              {family: "TOP", type: "rectangleTOP", params: {}, connections: []}
+            ]}
+        ]
+      }
+    ]}
+    ]})
   })
 })

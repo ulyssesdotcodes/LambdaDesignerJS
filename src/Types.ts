@@ -1,5 +1,6 @@
 import * as t from 'io-ts'
 import * as fpt from 'fp-ts/lib/Tree'
+import { Guid } from 'guid-typescript'
 
 // const ParamTypes = t.union([
 //         t.literal("number"), 
@@ -17,7 +18,7 @@ import * as fpt from 'fp-ts/lib/Tree'
 //         t.literal("DAT"),
 //         t.literal("MAT"),
 //         t.literal("CHOP"),
-//         t.literal("COMP"),
+//         t.literal("COMP")
 //         t.literal("SOP"),
 //         t.literal("OP")
 //     ])
@@ -62,6 +63,7 @@ export interface INode {
     type: string
     params: { [name: string] : IParamAny }
     connections: Array<INode>
+    text?: string
 }
 
 // export const Param : t.RecursiveType<t.Type<IParam<ParamType>>> = t.recursion<IParam<ParamType>>('Param', _ => t.interface({
@@ -88,6 +90,15 @@ export interface INode {
 export class OpTree<T extends OP> extends fpt.Tree<INode> {
   readonly _T!: T
   connect<R extends T>(n: OpTree<R>) : OpTree<R> {
+    let root : OpTree<T> = n
+    while(root.forest.length > 0) {
+      root = root.forest[0] as OpTree<T>
+    }
+    root.forest[0] = new OpTree(this.value, this.forest)
+    return n
+  } 
+
+  addConnect<R extends T>(n: OpTree<R>) : OpTree<R> {
     return new OpTree(n.value, n.forest.concat([this]))
   } 
 
@@ -95,4 +106,19 @@ export class OpTree<T extends OP> extends fpt.Tree<INode> {
     this.value.connections = this.forest.map((t : OpTree<T>) => t.out())
     return this.value
   }
+}
+
+export interface FBNode extends INode{
+    readonly special: "FB",
+    id: Guid,
+    params: {},
+}
+
+export interface FBTargetNode extends INode {
+    readonly special: "FBT"
+    selects: Array<Guid>
+}
+
+export class FBOpTree<T extends OP> extends OpTree<T> {
+    readonly _T!: T
 }

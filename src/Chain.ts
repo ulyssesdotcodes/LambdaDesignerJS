@@ -1,18 +1,20 @@
-import { OpTree, INode, OP, IParamAny, IParam, IParam2, IParam3, IParam4, ParamType } from './Types'
+import { FBNode, FBTargetNode, OpTree, INode, OP, IParamAny, IParam, IParam2, IParam3, IParam4, ParamType } from './Types'
 import { strict } from 'assert';
 import * as fpt from 'fp-ts/lib/Tree'
 import * as assert from 'assert'
 import { isNumber, isBoolean } from 'util';
+import { Guid } from 'guid-typescript'
 
 // Ops
 
 const op = <T extends OP>(type: OP) => (optype: string, params: { [name: string] : IParamAny}) : OpTree<T> => {
+  if (type === "DAT"){}
   return new OpTree<T>({family: type, type: optype + type, params: params, connections: []}, [])
 }
 
 export const top = op<"TOP">("TOP")
 export const tope = (optype: string) => op<"TOP">("TOP")(optype, {})
-export const dop = op<"DAT">("DAT")
+export const dat = op<"DAT">("DAT")
 export const date = (optype: string) => op<"DAT">("DAT")(optype, {})
 export const chop = op<"CHOP">("CHOP")
 export const chope = (optype: string) => op<"CHOP">("CHOP")(optype, {})
@@ -22,6 +24,22 @@ export const mat = op<"MAT">("MAT")
 export const mate = (optype: string) => op<"MAT">("MAT")(optype, {})
 export const comp = op<"COMP">("COMP")
 export const compe = (optype: string) => op<"COMP">("COMP")(optype, {})
+
+export const feedbacktop = (): OpTree<"TOP"> => {
+  let baseop : FBNode= { family: "TOP", type: "feedbackTOP", special: "FB", id: Guid.create(), connections: [], params: {}}
+  return new OpTree<"TOP">(baseop, [])
+}
+
+export const feedbacktarget = (fbg: Guid, optype: string, params: {[name: string] : IParamAny}) : OpTree<"TOP"> => {
+  let baseop : FBTargetNode = {special: "FBT", selects: [fbg], connections: [], params: params, type: optype + "TOP", family: "TOP"}
+  return new OpTree<"TOP">(baseop, [])
+}
+
+// export const feedbackChain = (before: OpTree<"TOP">, middle: OpTree<"TOP">) : OpTree<"TOP"> => {
+//   let fbt = feedbacktop(
+//   middle.value = feedbacktarget(fbt.value.id, middle.value.optype, middle.value.params)
+//   return chain.
+// }
 
 export const fp = (v: number) : IParam<"float"> =>  {
   assert.ok(isNumber(v), "float param only takes numbers");
@@ -46,6 +64,19 @@ export const mp = (v: number) : IParam<"menu"> =>  {
 export const xyp = (v0: IParam<"float">, v1: IParam<"float">) : IParam2<"xy"> =>  {
   assert.ok(v0.type == "float" && v1.type == "float", "xy requires float params")
   return ({  type: "xy", value0: v0.value0, value1: v1.value0 })
+}
+export const xyzp = (v0: IParam<"float">, v1: IParam<"float">, v2: IParam<"float">) : IParam3<"xyz"> =>  {
+  assert.ok(v0.type == "float", "xyz requires float params")
+  assert.ok(v1.type == "float", "xyz requires float params")
+  assert.ok(v2.type == "float", "xyz requires float params")
+  return ({  type: "xyz", value0: v0.value0, value1: v1.value0, value2: v2.value0 })
+}
+export const xyzwp = (v0: IParam<"float">, v1: IParam<"float">, v2: IParam<"float">, v3: IParam<"float">) : IParam4<"xyzw"> =>  {
+  assert.ok(v0.type == "float", "xyzw requires float params")
+  assert.ok(v1.type == "float", "xyzw requires float params")
+  assert.ok(v2.type == "float", "xyzw requires float params")
+  assert.ok(v3.type == "float", "xyzw requires float params")
+  return ({  type: "xyzw", value0: v0.value0, value1: v1.value0, value2: v2.value0, value3: v3.value0 })
 }
 export const whp = (v0: IParam<"number">, v1: IParam<"number">) : IParam2<"wh"> =>  {
   assert.ok(v0.type == "number" && v1.type == "number", "wh requires number params")
@@ -100,3 +131,12 @@ export const addp = mathopp("+")
 export const subp = mathopp("-")
 export const divp = mathopp("/")
 export const modp = mathopp("%")
+
+export const x4p = (v0: IParam<"float">) : IParam4<"xyzw"> =>  {
+  assert.ok(v0.type == "float", "xyzw requires float params")
+  let undef = { type: "float", value0: [] }
+  return ({  type: "xyzw", value0: v0.value0, value1: [], value2: [], value3: [] })
+}
+
+export const seconds = { type: "float", value0: ["absTime.seconds"]} as IParam<"float">
+
