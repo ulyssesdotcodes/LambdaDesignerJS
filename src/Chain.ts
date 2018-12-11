@@ -35,11 +35,13 @@ export const feedbacktarget = (fbg: Guid, optype: string, params: {[name: string
   return new OpTree<"TOP">(baseop, [])
 }
 
-// export const feedbackChain = (before: OpTree<"TOP">, middle: OpTree<"TOP">) : OpTree<"TOP"> => {
-//   let fbt = feedbacktop(
-//   middle.value = feedbacktarget(fbt.value.id, middle.value.optype, middle.value.params)
-//   return chain.
-// }
+export const feedbackChain = (middle: OpTree<"TOP">) : OpTree<"TOP"> => {
+  let fbt = feedbacktop()
+  let baseop : FBTargetNode = {special: "FBT", selects: [(fbt.value as FBNode).id], connections: [], params: middle.value.params, type: middle.value.type, family: "TOP"}
+  let newoptree = new OpTree<"TOP">(baseop, middle.forest)
+  fbt.connect(newoptree)
+  return newoptree
+}
 
 export const fp = (v: number) : IParam<"float"> =>  {
   assert.ok(isNumber(v), "float param only takes numbers");

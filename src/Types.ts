@@ -102,6 +102,10 @@ export class OpTree<T extends OP> extends fpt.Tree<INode> {
     return new OpTree(n.value, n.forest.concat([this]))
   } 
 
+  customConnect<R extends T>(f: (optree: OpTree<T>) => OpTree<T>) : OpTree<T> {
+    return f(this);
+  }
+
   out(): INode {
     this.value.connections = this.forest.map((t : OpTree<T>) => t.out())
     return this.value
