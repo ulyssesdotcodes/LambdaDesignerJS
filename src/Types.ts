@@ -87,29 +87,94 @@ export interface INode {
 //     })
 // ])
 
-export class OpTree<T extends OP> extends fpt.Tree<INode> {
-  readonly _T!: T
-  connect<R extends T>(n: OpTree<R>) : OpTree<R> {
-    let root : OpTree<T> = n
-    while(root.forest.length > 0) {
-      root = root.forest[0] as OpTree<T>
-    }
-    root.forest[0] = new OpTree(this.value, this.forest)
-    return n
-  } 
 
-  addConnect<R extends T>(n: OpTree<R>) : OpTree<R> {
-    return new OpTree(n.value, n.forest.concat([this]))
-  } 
+// export class OpTree<T extends OP> {
+//   readonly _T!: T
+//   constructor(protected value : INode, protected forest: OpTree<T>[]){
+//     forest.push(new ReplaceTree<T>(null, null));
+//   }
 
-  customConnect<R extends T>(f: (optree: OpTree<T>) => OpTree<T>) : OpTree<T> {
-    return f(this);
+//   connectTo(n: OpTree<T>) : OpTree<T> {
+//     return n.handleConnection(this);
+//   } 
+
+//   addConnection(n: OpTree<T>) : OpTree<T> {
+//       this.forest.push(n)
+//       return this
+//   }
+
+//   handleConnection(n: OpTree<T>) : OpTree<T> {
+//     if(this.forest.length > 0) {
+//       n.connectTo(this.forest[0] as OpTree<T>)
+//     } else {
+//       this.forest[0] = n
+//     }
+//     return this
+//   }
+
+//   handleConnectionToIdx(n: OpTree<T>, idx: number) {
+
+//   }
+
+//   out(): INode {
+//     this.value.connections = this.forest.map((t : OpTree<T>) => t.out())
+//     return this.value
+//   }
+// }
+
+// export class ReplaceTree<T extends OP> extends OpTree<T> { 
+//     replaceTree: boolean = true
+// }
+
+// export class FillInOpTree<T extends OP> extends OpTree<T> {
+//   constructor(private idx: number, val : INode, forest: OpTree<T>[]) {
+//     super(val, forest)
+//   }
+
+//   handleConnection(n: OpTree<T>) : OpTree<T> {
+//     this.forest.splice(this.idx, 0, n);
+//     return this;
+//   }
+// }
+
+// export class CustomConnectOpTree<T extends OP> extends OpTree<T> {
+//   constructor(private handlef: (self: OpTree<T>, n: OpTree<T>) => OpTree<T>, val : INode, forest: OpTree<T>[]) {
+//     super(val, forest)
+//   }
+
+//   handleConnection(n: OpTree<T>) : OpTree<T> {
+//     return this.handlef(this, n);
+//   }
+// }
+
+export interface NodeConnectFunc<T extends OP> {
+ (inputs: Node<T>[]): Node<T>;
+}
+
+export class DisconnectedNode<T extends OP> {
+  readonly _T!: T 
+  constructor(private revConnect: NodeConnectFunc<T>){}
+  connect(n: DisconnectedNode<T>) : DisconnectedNode<T> {
+    return new DisconnectedNode(inputs => n.run([this.run(inputs)]))
   }
-
+  run(inputs: Node<T>[]): Node<T> {
+    return this.revConnect(inputs)
+  }
+  runT(){
+    return this.run([])
+  }
   out(): INode {
-    this.value.connections = this.forest.map((t : OpTree<T>) => t.out())
-    return this.value
+    return this.runT().node
   }
+}
+
+export class Node<T extends OP> {
+  readonly _T!: T 
+  constructor(public node: INode) {}
+  connect(n: DisconnectedNode<T>): Node<T>{
+    return n.run([this])
+  }
+  out(){ return this.node }
 }
 
 export interface FBNode extends INode{
@@ -121,8 +186,4 @@ export interface FBNode extends INode{
 export interface FBTargetNode extends INode {
     readonly special: "FBT"
     selects: Array<Guid>
-}
-
-export class FBOpTree<T extends OP> extends OpTree<T> {
-    readonly _T!: T
 }
