@@ -84,45 +84,28 @@ describe('Chain', () =>  {
     let c1 = { family: "CHOP", type: "waveCHOP", params: {}, connections:[]}
     expect(n).to.eql({ family: "CHOP", type: "waveCHOP", params: {"rate": { type: "float", value0: ["( ", "op(\"", c1, "\")[", "0", "]", " * ", "1", " )"]}}, connections:[]})
   })
-//   it('can make feedback ops', () => {
-//     let fbt = chain.feedbacktop()
-//     let n = chain.tope("rectangle")
-//       .connect(fbt)
-//       .addConnection(fbt.connect(chain.tope("level")).connect(chain.feedbacktarget((fbt.value as FBNode).id, "composite", {})))
-//       .connect(chain.tope("blur"))
-//       .out()
-
-//     let guid = (n.connections[0] as FBTargetNode).selects[0]
-
-//     expect(n).to.eql({ family: "TOP", type: "blurTOP", params: {}, connections:[ 
-//       {
-//         special: "FBT",
-//         family: "TOP",
-//         type: "compositeTOP",
-//         selects: [guid],
-//         params: {},
-//         connections:[
-//           {family: "TOP", type: "levelTOP", params: {}, connections: [
-//             { special: "FB", family: "TOP", type: "feedbackTOP", id: guid, params: {}, connections:[
-//               {family: "TOP", type: "rectangleTOP", params: {}, connections: []}
-//             ]}
-//           ]},
-//           { special: "FB", family: "TOP", type: "feedbackTOP", id: guid, params: {}, connections:[
-//               {family: "TOP", type: "rectangleTOP", params: {}, connections: []}
-//             ]}
-//         ],
-//       }
-//     ]})
-//   })
+  it('can insertconn', () => {
+    const n = chain.chop("constant", {"name0": chain.sp("test")}).connect(chain.insertconn(chain.chope("merge"), [chain.chope("wave").runT()], [chain.chope("constant").runT()]));
+    expect(n.out()).to.eql(
+      { family: "CHOP",
+        type: "mergeCHOP",
+        params: {},
+        connections: [
+          { family: "CHOP", type: "waveCHOP", params: {}, connections:[]},
+          { family: "CHOP", type: "constantCHOP", params: {name0: {type: "string", value0: ['"test"']}}, connections:[]},
+          { family: "CHOP", type: "constantCHOP", params: {}, connections:[]},
+        ]
+      })
+  })
   it('can make multi feedback ops', () => {
     let fbt = chain.feedbacktop()
     let fbt2 = chain.feedbacktop()
     let n = chain.tope("rectangle")
-      .connect(chain.customconnectop((inputs) => 
-        chain.feedbackChain(chain.customconnectop(
+      .connect(chain.cc((inputs) => 
+        chain.feedbackChain(chain.cc(
           (fbinputs) => chain.tope("composite").run(inputs.concat([chain.tope("rectangle")
-            .connect(chain.customconnectop((inputs) => 
-              chain.feedbackChain(chain.customconnectop(
+            .connect(chain.cc((inputs) => 
+              chain.feedbackChain(chain.cc(
                 (fbinputs) => chain.tope("composite").run(inputs.concat([chain.tope("level").run(fbinputs)])))
             ).run(inputs)))
             .connect(chain.tope("blur")).runT(), chain.tope("level").run(fbinputs)])))
@@ -130,7 +113,6 @@ describe('Chain', () =>  {
       .connect(chain.tope("blur"))
       .out()
 
-    console.log(JSON.stringify(n))
     let guid = (n.connections[0] as FBTargetNode).selects[0]
     let guid2 = (n.connections[0].connections[1].connections[0] as FBTargetNode).selects[0]
 
@@ -172,7 +154,7 @@ describe('Chain', () =>  {
   })
   it('can use feedback util', () => {
     let n = chain.tope("rectangle")
-      .connect(chain.customconnectop((inputs) => chain.feedbackChain(chain.customconnectop(
+      .connect(chain.cc((inputs) => chain.feedbackChain(chain.cc(
         (fbinputs) => chain.tope("composite").run(inputs.concat([chain.tope("level").run(fbinputs)])))
       ).run(inputs)))
       .connect(chain.tope("blur"))
@@ -198,37 +180,4 @@ describe('Chain', () =>  {
       }
     ]})
   })
-//   it('can use feedback with customconnect', () => {
-//     let comp = chain.tope("level")
-//     let fbprep = chain.customconnectop((self, n) => {
-//       n.connect(self.forest[0] as OpTree<T>)
-//       self.addConnection(n)
-//       return self
-//     }, chain.feedbackChain(chain.tope("level").connect(chain.tope("composite"))));
-
-//     let n = chain.tope("rectangle")
-//       .connect(fbprep)
-//       .connect(chain.tope("blur"))
-//       .out()
-
-//     let guid = (n.connections[0] as FBTargetNode).selects[0]
-
-//     expect(n).to.eql({ family: "TOP", type: "blurTOP", params: {}, connections:[ 
-//       {
-//         special: "FBT",
-//         family: "TOP",
-//         type: "compositeTOP",
-//         selects: [guid],
-//         params: {},
-//         connections:[
-//           {family: "TOP", type: "levelTOP", params: {}, connections: [
-//             { special: "FB", family: "TOP", type: "feedbackTOP", id: guid, params: {}, connections:[
-//               {family: "TOP", type: "rectangleTOP", params: {}, connections: []}
-//             ]}
-//           ]},
-//           { family: "TOP", type: "rectangleTOP", params: {}, connections:[] }
-//         ],
-//       }
-//     ]})
-//   })
 })

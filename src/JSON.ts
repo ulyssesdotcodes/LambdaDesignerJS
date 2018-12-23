@@ -60,9 +60,9 @@ function addNode(nodedict: NodeDict, node: INode) : [string, number] {
         parsednode.connections.push("/" + child[0] + "_" + child[1])
     }
 
-    placeInNodeDict(nodedict, parsednode)
+    console.log(parsednode)
 
-    let output : [string, number]= [node.type, nodedict[node.type].length - 1]
+    let output : [string, number]= placeInNodeDict(nodedict, parsednode)
 
     if (instanceofFBTargetNode(node)) {
         for(let fbn of nodedict["feedback" + node.family]) {
@@ -78,10 +78,10 @@ function addNode(nodedict: NodeDict, node: INode) : [string, number] {
     return output;
 }
 
-function placeInNodeDict(nodedict: NodeDict, node: ParsedNode) {
+function placeInNodeDict(nodedict: NodeDict, node: ParsedNode) : [string, number] {
     if(node.ty in nodedict) {
         let nodes = nodedict[node.ty];
-        let foundnode = nodes.reduce((acc, n, idx) => isNone(acc) && deepEqual(n, node) ? option.of(idx) : none, none )
+        let foundnode = nodes.reduce((acc, n, idx) => isNone(acc) && deepEqual(n, node) ? option.of(idx) : acc, none )
         if(foundnode.isSome()) {
             return [node.ty, foundnode.value]
         }
@@ -90,6 +90,7 @@ function placeInNodeDict(nodedict: NodeDict, node: ParsedNode) {
     }
 
     nodedict[node.ty].push(node)
+    return [node.ty, nodedict[node.ty].length - 1]
 }
 
 function addParameter(nodedict: NodeDict, parameters: {[name: string]: string},

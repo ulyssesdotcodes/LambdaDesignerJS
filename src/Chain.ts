@@ -40,12 +40,16 @@ export const compe = (optype: string) => op<"COMP">("COMP")(optype, {})
 // export const replacesop = new ReplaceTree<"SOP">(sope("null").value, [])
 // export const replacemat = new ReplaceTree<"MAT">(mate("null").value, [])
 
-// export const customconnectop = <T extends OP>(handlef: (self: OpTree<T>, n: OpTree<T>) => OpTree<T>, root: OpTree<T>) => {
+// export const cc = <T extends OP>(handlef: (self: OpTree<T>, n: OpTree<T>) => OpTree<T>, root: OpTree<T>) => {
 //   new CustomConnectOpTree<T>(handlef, root.value, root.forest as OpTree<T>[]);
 // }
 
-export const customconnectop = <T extends OP>(func: NodeConnectFunc<T>) => {
+export const cc = <T extends OP>(func: NodeConnectFunc<T>) => {
   return new DisconnectedNode(func);
+}
+
+export const insertconn = <T extends OP>(dn: DisconnectedNode<T>, before: Node<T>[], after: Node<T>[]) => {
+  return cc<T>((inputs) => dn.run(before.concat(inputs, after)))
 }
 
 export const node = <T extends OP, R extends INode>(n: R) => {
@@ -53,21 +57,21 @@ export const node = <T extends OP, R extends INode>(n: R) => {
 }
 
 export const feedbacktop = (): DisconnectedNode<"TOP"> => {
-  return customconnectop((inputs) => node({ family: "TOP", type: "feedbackTOP", special: "FB", id: Guid.create(), connections: inputs.map(i => i.out()), params: {}}))
+  return cc((inputs) => node({ family: "TOP", type: "feedbackTOP", special: "FB", id: Guid.create(), connections: inputs.map(i => i.out()), params: {}}))
 }
 
 export const feedbacktarget = (fbg: Guid, optype: string, params: {[name: string] : IParamAny}) : DisconnectedNode<"TOP"> => {
-  return customconnectop((inputs) => node({special: "FBT", selects: [fbg], connections: inputs.map(i => i.out()), params: params, type: optype + "TOP", family: "TOP"}))
+  return cc((inputs) => node({special: "FBT", selects: [fbg], connections: inputs.map(i => i.out()), params: params, type: optype + "TOP", family: "TOP"}))
 }
 
 export const feedbackChain = (middle: DisconnectedNode<"TOP">) : DisconnectedNode<"TOP"> => {
-  return customconnectop<"TOP">((inputs) => {
+  return cc<"TOP">((inputs) => {
     let fbt = feedbacktop()
-    let baseop = (id: Guid) => customconnectop<"TOP">((inputs) => {
+    let baseop = (id: Guid) => cc<"TOP">((inputs) => {
       let basemiddle = middle.run(inputs).out()
       return node({special: "FBT", selects: [id], connections: basemiddle.connections, params: middle.run(inputs).out().params, type: middle.out().type, family: "TOP"})
     })
-    return fbt.connect(customconnectop((inputs) => baseop((inputs[0].node as FBNode).id).run(inputs))).run(inputs)
+    return fbt.connect(cc((inputs) => baseop((inputs[0].node as FBNode).id).run(inputs))).run(inputs)
   })
 }
 

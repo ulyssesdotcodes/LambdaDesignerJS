@@ -83,6 +83,140 @@ describe('JSON', () => {
         let parsed = nodeToJSON(n);
         expect(parsed).to.equal("{\"/waveCHOP_0\":{\"ty\":\"waveCHOP\",\"optype\":\"CHOP\",\"parameters\":{\"rate\":\"1.0\"},\"connections\":[]},\"/mathCHOP_0\":{\"ty\":\"mathCHOP\",\"optype\":\"CHOP\",\"parameters\":{},\"connections\":[\"/waveCHOP_0\",\"/waveCHOP_0\"]}}")
     })
+    it('can condense similar nested children', ()=>{
+        const c1: INode = {
+            family: "CHOP",
+            type: "waveCHOP",
+            params: {"rate": { type: "float", value0: ["1.0"] }},
+            connections: []
+        }
+        const c2: INode = {
+            family: "CHOP",
+            type: "waveCHOP",
+            params: {"rate": { type: "float", value0: ["1.0"] }},
+            connections: []
+        }
+        const n1: INode = {
+            family: "CHOP",
+            type: "mathCHOP",
+            params: {},
+            connections: [c1, c2]
+        }
+        const n: INode = {
+            family: "CHOP",
+            type: "mathCHOP",
+            params: {},
+            connections: [n1, c2]
+        }
+
+        let parsed = nodeToJSON(n);
+
+        expect(parsed).to.equal(JSON.stringify({
+            "/waveCHOP_0": {
+                ty: "waveCHOP",
+                optype: "CHOP",
+                parameters: {"rate": '1.0'},
+                connections: []
+            },
+            "/mathCHOP_0": {
+                ty: "mathCHOP",
+                optype: "CHOP",
+                parameters: {},
+                connections: ["/waveCHOP_0", "/waveCHOP_0"]
+            },
+            "/mathCHOP_1": {
+                ty: "mathCHOP",
+                optype: "CHOP",
+                parameters: {},
+                connections: ["/mathCHOP_0", "/waveCHOP_0"]
+            },
+        }));
+    })
+    it('can condense similar params', ()=>{
+        const c1: INode = {
+            family: "CHOP",
+            type: "waveCHOP",
+            params: {"rate": { type: "float", value0: ["1.0"] }},
+            connections: []
+        }
+        const c2: INode = {
+            family: "CHOP",
+            type: "constantCHOP",
+            params: {},
+            connections: []
+        }
+        const t1: INode = {
+            family: "TOP",
+            type: "choptoTOP",
+            params: {"chop": { type: "CHOP", value0: [c1] }},
+            connections: []
+        }
+        const t2: INode = {
+            family: "TOP",
+            type: "choptoTOP",
+            params: {"chop": { type: "CHOP", value0: [c2] }},
+            connections: []
+        }
+        const n1: INode = {
+            family: "TOP",
+            type: "compositeTOP",
+            params: {},
+            connections: [t1, t2]
+        }
+        const n2: INode = {
+            family: "TOP",
+            type: "compositeTOP",
+            params: {},
+            connections: [t1, t2]
+        }
+        const n: INode = {
+            family: "TOP",
+            type: "compositeTOP",
+            params: {},
+            connections: [n1, n2]
+        }
+
+        let parsed = nodeToJSON(n);
+
+        expect(parsed).to.equal(JSON.stringify({
+            "/waveCHOP_0": {
+                ty: "waveCHOP",
+                optype: "CHOP",
+                parameters: {"rate": '1.0'},
+                connections: []
+            },
+            "/choptoTOP_0": {
+                ty: "choptoTOP",
+                optype: "TOP",
+                parameters: {"chop": 'waveCHOP_0'},
+                connections: []
+            },
+            "/choptoTOP_1": {
+                ty: "choptoTOP",
+                optype: "TOP",
+                parameters: {"chop": 'constantCHOP_0'},
+                connections: []
+            },
+            "/constantCHOP_0": {
+                ty: "constantCHOP",
+                optype: "CHOP",
+                parameters: {},
+                connections: []
+            },
+            "/compositeTOP_0": {
+                ty: "compositeTOP",
+                optype: "TOP",
+                parameters: {},
+                connections: ["/choptoTOP_0", "/choptoTOP_1"]
+            },
+            "/compositeTOP_1": {
+                ty: "compositeTOP",
+                optype: "TOP",
+                parameters: {},
+                connections: ["/compositeTOP_0", "/compositeTOP_0"]
+            },
+        }));
+    })
     it('can parse node params', ()=> {
         const c1: INode = {
             family: "CHOP",
