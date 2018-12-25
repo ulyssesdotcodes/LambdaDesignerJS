@@ -1,4 +1,4 @@
-import { INode, IParamAny, IParam, ParamType } from './Types'
+import { INode, IParamAny, IParam, ParamType, OPTypes } from './Types'
 import { Either, left, right, tryCatch } from 'fp-ts/lib/Either'
 import { Errors, Validation } from 'io-ts'
 import * as parsedops from './parsedjs.json'
@@ -25,7 +25,7 @@ export function validateNode(node: INode) : Either<string[], INode> {
 }
 
 export function testConnection(type: string, family: string, connection:INode) : Either<string[], INode> {
-    return connection.family == family ? validateNode(connection) : left(["expected '" + family + "' as '" + type + "' child but got '" + connection.family + "'"])
+    return connection.family == family || family == "COMP" ? validateNode(connection) : left(["expected '" + family + "' as '" + type + "' child but got '" + connection.family + "'"])
 }
  
 export function testParams(type: string, params: {[name: string] : IParamAny }) : Either<string[], {[name: string] : any}> {
@@ -39,7 +39,7 @@ function testParam(type: string, name: string, param: IParamAny): Either<string[
         .chain(p => (name in parsedops[type].pars) ? 
             right<string[], IParamAny>(p) : left<string[], IParamAny>(["param '" + name +"' does not exist for type '" + type + "'"])
         )
-        .chain(p => param.type !== parsedops[type].pars[name].type ? 
+        .chain(p => param.type !== parsedops[type].pars[name].type && !(parsedops[type].pars[name].type == "OP" && OPTypes.indexOf(param.type) > -1) ? 
             left<string[], IParamAny>(["param type is not correct for '" + type +"." + name + "'"]) : right<string[], IParamAny>(p)
         )
         .chain(p => fpa.array.reduce(p.value0, right(p), (acc, b) => acc.chain(c => typeof b === "string" ? right(p) : validateNode(b as INode).map(_ => c))))

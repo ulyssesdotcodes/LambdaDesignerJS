@@ -1,6 +1,7 @@
 import * as t from 'io-ts'
 import * as fpt from 'fp-ts/lib/Tree'
 import { Guid } from 'guid-typescript'
+import { connect } from 'http2';
 
 // const ParamTypes = t.union([
 //         t.literal("number"), 
@@ -55,6 +56,7 @@ export interface IParam4<T extends ParamType4> {
 }
 
 export type OP = "TOP" | "CHOP" | "MAT" | "SOP" | "COMP" | "DAT"
+export const OPTypes = ["TOP", "CHOP", "MAT", "SOP", "COMP", "DAT"]
 
 export type IParamAny = IParam<ParamType> | IParam2<ParamType2> | IParam3<ParamType3> | IParam4<ParamType4>
 
@@ -76,10 +78,13 @@ export class DisconnectedNode<T extends OP> {
   connect(n: DisconnectedNode<T>) : DisconnectedNode<T> {
     return new DisconnectedNode(inputs => n.run([this.run(inputs)]))
   }
+  c(n: DisconnectedNode<T>) : DisconnectedNode<T> {
+    return this.connect(n);
+  }
   run(inputs: Node<T>[]): Node<T> {
     return this.revConnect(inputs)
   }
-  runT(){
+  runT(): Node<T>{
     return this.run([])
   }
   out(): INode {
@@ -92,6 +97,12 @@ export class Node<T extends OP> {
   constructor(public node: INode) {}
   connect(n: DisconnectedNode<T>): Node<T>{
     return n.run([this])
+  }
+  c(n: DisconnectedNode<T>): Node<T>{
+    return this.connect(n);
+  }
+  runT(): Node<T>{
+    return this;
   }
   out(){ return this.node }
 }

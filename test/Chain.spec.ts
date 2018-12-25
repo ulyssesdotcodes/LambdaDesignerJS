@@ -155,7 +155,8 @@ describe('Chain', () =>  {
   it('can use feedback util', () => {
     let n = chain.tope("rectangle")
       .connect(chain.cc((inputs) => chain.feedbackChain(chain.cc(
-        (fbinputs) => chain.tope("composite").run(inputs.concat([chain.tope("level").run(fbinputs)])))
+        (fbinputs) => chain.tope("composite").run(
+          inputs.concat([chain.tope("level").run(fbinputs)])))
       ).run(inputs)))
       .connect(chain.tope("blur"))
       .out()

@@ -15656,7 +15656,7 @@
         ]
       },
       "lights": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "orderindtrans": {
         "type": "toggle"
@@ -15979,7 +15979,7 @@
         ]
       },
       "camera": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "croprightunit": {
         "type": "menu",
@@ -17823,7 +17823,7 @@
         ]
       },
       "lights": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "orderindtrans": {
         "type": "toggle"
@@ -18134,7 +18134,7 @@
         ]
       },
       "camera": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "croprightunit": {
         "type": "menu",
@@ -21655,7 +21655,7 @@
     "maxInputs": 1,
     "pars": {
       "camera": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "camz": {
         "type": "float"
@@ -22315,7 +22315,7 @@
         "type": "SOP"
       },
       "xform": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "sop10": {
         "type": "SOP"
@@ -22373,7 +22373,7 @@
         "type": "toggle"
       },
       "lookat": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "t": {
         "type": "xyz"
@@ -22641,7 +22641,7 @@
         "type": "CHOP"
       },
       "camera": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "colorchop": {
         "type": "CHOP"
@@ -22882,7 +22882,7 @@
         "type": "pulse"
       },
       "rootbone": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "color": {
         "type": "menu",
@@ -22940,7 +22940,7 @@
         "type": "string"
       },
       "camera": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "geotype": {
         "type": "menu",
@@ -23166,7 +23166,7 @@
         ]
       },
       "camera": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "t": {
         "type": "xyz"
@@ -23344,7 +23344,7 @@
         "type": "float"
       },
       "obj": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "minpercent": {
         "type": "float"
@@ -23803,7 +23803,7 @@
         "type": "toggle"
       },
       "lookat": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "val4": {
         "type": "float"
@@ -25198,7 +25198,7 @@
         "type": "xyz"
       },
       "affector": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "wrist2t": {
         "type": "xyz"
@@ -25705,7 +25705,7 @@
         "type": "float"
       },
       "lookat": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "customattrib0chan2": {
         "type": "string"
@@ -25826,7 +25826,7 @@
         "type": "toggle"
       },
       "skelrootpath": {
-        "type": "OBJ"
+        "type": "COMP"
       }
     },
     "minInputs": 1,
@@ -26796,7 +26796,7 @@
         "type": "string"
       },
       "camera": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "geotype": {
         "type": "menu",
@@ -27217,7 +27217,7 @@
         ]
       },
       "pointobj": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "partdir": {
         "type": "xyz"
@@ -27277,10 +27277,10 @@
         "type": "xyz"
       },
       "partobj": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "primobj": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "primoffset": {
         "type": "number"
@@ -27905,7 +27905,7 @@
         "type": "xyz"
       },
       "lookat": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "pshapev": {
         "type": "toggle"
@@ -29028,7 +29028,7 @@
         "type": "TOP"
       },
       "lightmask": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "preset": {
         "type": "pulse"
@@ -29161,7 +29161,7 @@
         "type": "string"
       },
       "constrain": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "clone": {
         "type": "COMP"
@@ -29255,7 +29255,7 @@
         "type": "xyz"
       },
       "lookat": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "savebackup": {
         "type": "toggle"
@@ -29466,7 +29466,7 @@
         "type": "TOP"
       },
       "lightmask": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "preset": {
         "type": "pulse"
@@ -29618,7 +29618,7 @@
         "type": "string"
       },
       "constrain": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "clone": {
         "type": "COMP"
@@ -29676,7 +29676,7 @@
         "type": "string"
       },
       "target": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "instancetexanisotropy": {
         "type": "menu",
@@ -29714,7 +29714,7 @@
         "type": "xyz"
       },
       "lookat": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "instancesx": {
         "type": "string"
@@ -30646,7 +30646,7 @@
         ]
       },
       "constrain": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "clone": {
         "type": "COMP"
@@ -30669,7 +30669,7 @@
       },
       "scale": {},
       "camlightmask": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "pxform": {
         "type": "toggle"
@@ -30705,7 +30705,7 @@
         "type": "xyz"
       },
       "lookat": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "win": {
         "type": "xy"
@@ -32069,7 +32069,7 @@
         "type": "TOP"
       },
       "lightmask": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "sequence": {
         "type": "float"
@@ -32220,7 +32220,7 @@
         "type": "string"
       },
       "constrain": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "clone": {
         "type": "COMP"
@@ -32328,7 +32328,7 @@
         "type": "xyz"
       },
       "lookat": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "instancesx": {
         "type": "string"
@@ -33089,7 +33089,7 @@
         "type": "toggle"
       },
       "constrain": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "clone": {
         "type": "COMP"
@@ -33224,7 +33224,7 @@
         "type": "xyz"
       },
       "lookat": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "fogcolor": {
         "type": "rgb"
@@ -33236,7 +33236,7 @@
         "type": "float"
       },
       "camlightmask": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "prioritymethod": {
         "type": "menu",
@@ -34124,7 +34124,7 @@
         "type": "TOP"
       },
       "lightmask": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "preset": {
         "type": "pulse"
@@ -34258,7 +34258,7 @@
         "type": "string"
       },
       "constrain": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "clone": {
         "type": "COMP"
@@ -34360,7 +34360,7 @@
         "type": "xyz"
       },
       "lookat": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "savebackup": {
         "type": "toggle"
@@ -34556,7 +34556,7 @@
         "type": "TOP"
       },
       "lightmask": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "preset": {
         "type": "pulse"
@@ -34690,7 +34690,7 @@
         "type": "string"
       },
       "constrain": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "clone": {
         "type": "COMP"
@@ -34789,7 +34789,7 @@
         "type": "xyz"
       },
       "lookat": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "savebackup": {
         "type": "toggle"
@@ -34922,7 +34922,7 @@
         ]
       },
       "constrain": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "clone": {
         "type": "COMP"
@@ -35000,7 +35000,7 @@
         "type": "xyz"
       },
       "camlightmask": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "material": {
         "type": "MAT"
@@ -35064,7 +35064,7 @@
         "type": "string"
       },
       "lookat": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "fogcolor": {
         "type": "rgb"
@@ -35594,7 +35594,7 @@
         ]
       },
       "constrain": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "clone": {
         "type": "COMP"
@@ -35616,7 +35616,7 @@
       },
       "scale": {},
       "camlightmask": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "pxform": {
         "type": "toggle"
@@ -35654,7 +35654,7 @@
         "type": "xyz"
       },
       "lookat": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "win": {
         "type": "xy"
@@ -35845,7 +35845,7 @@
         "type": "TOP"
       },
       "lightmask": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "preset": {
         "type": "pulse"
@@ -35973,7 +35973,7 @@
         "type": "string"
       },
       "constrain": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "clone": {
         "type": "COMP"
@@ -36069,7 +36069,7 @@
         "type": "xyz"
       },
       "lookat": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "savebackup": {
         "type": "toggle"
@@ -36445,7 +36445,7 @@
         ]
       },
       "constrain": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "clone": {
         "type": "COMP"
@@ -36481,7 +36481,7 @@
         ]
       },
       "camlightmask": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "shadowcasters": {
         "type": "OP"
@@ -36538,7 +36538,7 @@
         "type": "xyz"
       },
       "lookat": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "projmapextendw": {
         "type": "menu",
@@ -36550,7 +36550,7 @@
         ]
       },
       "scenecamera": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "extname2": {
         "type": "string"
@@ -37044,7 +37044,7 @@
         "type": "TOP"
       },
       "lightmask": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "preset": {
         "type": "pulse"
@@ -37198,7 +37198,7 @@
         "type": "string"
       },
       "constrain": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "clone": {
         "type": "COMP"
@@ -37312,7 +37312,7 @@
         "type": "xyz"
       },
       "lookat": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "instancesx": {
         "type": "string"
@@ -43655,7 +43655,7 @@
         "type": "toggle"
       },
       "referenceobj": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "callbacks": {
         "type": "DAT"
@@ -43664,7 +43664,7 @@
         "type": "toggle"
       },
       "custompickcameras": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "responsetime": {
         "type": "menu",
@@ -44632,7 +44632,7 @@
         ]
       },
       "sourceobject": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "attenuation": {
         "type": "toggle"
@@ -44652,7 +44652,7 @@
         "type": "string"
       },
       "listenerobject": {
-        "type": "OBJ"
+        "type": "COMP"
       }
     },
     "minInputs": 1,
@@ -45068,7 +45068,7 @@
         "type": "SOP"
       },
       "twistaffector": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "autoexportroot": {
         "type": "OP"
@@ -45100,10 +45100,10 @@
         ]
       },
       "endaffector": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "boneend": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "exportmethod": {
         "type": "menu",
@@ -45114,7 +45114,7 @@
         ]
       },
       "boneroot": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "scope": {
         "type": "string"
@@ -45605,7 +45605,7 @@
     "maxInputs": 1,
     "pars": {
       "guide": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "interpolation": {
         "type": "menu",
@@ -45651,7 +45651,7 @@
         ]
       },
       "boneend": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "order": {
         "type": "number"
@@ -45660,7 +45660,7 @@
         "type": "xyz"
       },
       "bonestart": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "scope": {
         "type": "string"
@@ -47106,7 +47106,7 @@
     "maxInputs": 2,
     "pars": {
       "reference": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "bearing": {
         "type": "xyz"
@@ -47138,7 +47138,7 @@
         ]
       },
       "target": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "dat": {
         "type": "DAT"
@@ -48592,7 +48592,7 @@
         "type": "toggle"
       },
       "source": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "exporttable": {
         "type": "DAT"
@@ -48607,7 +48607,7 @@
         ]
       },
       "fixed": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "init": {
         "type": "float"
@@ -52406,7 +52406,7 @@
     "maxInputs": 1,
     "pars": {
       "headobject": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "exporttable": {
         "type": "DAT"
@@ -52478,7 +52478,7 @@
         "type": "float"
       },
       "sourceobject": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "roomrightrelfect": {
         "type": "float"
@@ -55128,7 +55128,7 @@
         "type": "SOP"
       },
       "transobj": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "exporttable": {
         "type": "DAT"
@@ -55343,7 +55343,7 @@
         "type": "string"
       },
       "referenceobj": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "callbacks": {
         "type": "DAT"
@@ -56551,7 +56551,7 @@
         "type": "number"
       },
       "camera": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "vertexorder": {
         "type": "toggle"
@@ -61269,10 +61269,10 @@
         ]
       },
       "fromcomp3": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "tocomp1": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "top3extendv": {
         "type": "menu",
@@ -61444,7 +61444,7 @@
         "type": "string"
       },
       "tocomp0": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "top7anisotropy": {
         "type": "menu",
@@ -61587,7 +61587,7 @@
         "type": "CHOP"
       },
       "fromcomp4": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "chopuniname7": {
         "type": "string"
@@ -61829,7 +61829,7 @@
         "type": "string"
       },
       "tocomp4": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "alphathreshold": {
         "type": "float"
@@ -61989,10 +61989,10 @@
         ]
       },
       "fromcomp0": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "tocomp3": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "value6": {
         "type": "xyzw"
@@ -62054,7 +62054,7 @@
         ]
       },
       "fromcomp1": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "top8": {
         "type": "TOP"
@@ -62152,7 +62152,7 @@
         ]
       },
       "fromcomp2": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "sampler15": {
         "type": "string"
@@ -62443,7 +62443,7 @@
         "type": "xyzw"
       },
       "tocomp2": {
-        "type": "OBJ"
+        "type": "COMP"
       },
       "chopuniname2": {
         "type": "string"

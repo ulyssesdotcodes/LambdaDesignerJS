@@ -169,6 +169,17 @@ export const divp = mathopp("/")
 export const modp = mathopp("%")
 export const powp = mathopp("**")
 
+export const funcp = (b: string) => (a: IParam<"float">) => {
+  return { type: "float", value0: ([b, "("] as Array<string | INode>).concat(a.value0, [")"])}
+}
+
+export const funcp2 = (f: string) => (a: IParam<"float">, b: IParam<"float">) => {
+  return { type: "float", value0: ([f, "("] as Array<string | INode>).concat(a.value0, [", "], b.value0, [")"])}
+}
+
+export const absp = funcp("abs")
+export const clampp = funcp2("clamp")
+
 export const x4p = (v0: IParam<"float">) : IParam4<"xyzw"> =>  {
   assert.ok(v0.type == "float", "xyzw requires float params")
   let undef = { type: "float", value0: [] }
@@ -177,4 +188,5 @@ export const x4p = (v0: IParam<"float">) : IParam4<"xyzw"> =>  {
 
 export const seconds = { type: "float", value0: ["absTime.seconds"]} as IParam<"float">
 export const frames = { type: "float", value0: ["absTime.frame"]} as IParam<"float">
+export const sampleIndex = { type: "number", value0: ["sampleIndex"]} as IParam<"number">
 

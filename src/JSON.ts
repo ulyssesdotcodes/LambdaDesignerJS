@@ -60,8 +60,6 @@ function addNode(nodedict: NodeDict, node: INode) : [string, number] {
         parsednode.connections.push("/" + child[0] + "_" + child[1])
     }
 
-    console.log(parsednode)
-
     let output : [string, number]= placeInNodeDict(nodedict, parsednode)
 
     if (instanceofFBTargetNode(node)) {
