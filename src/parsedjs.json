@@ -29187,7 +29187,7 @@
       "instancerottox": {
         "type": "string"
       },
-      "scale": {},
+      "scale": {"type": "float"},
       "instancerotupx": {
         "type": "string"
       },

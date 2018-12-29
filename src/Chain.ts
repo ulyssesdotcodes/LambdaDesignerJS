@@ -18,7 +18,7 @@ const op = <T extends OP>(type: T) =>
   (ty: string, params: { [name: string] : IParamAny}) => 
     new DisconnectedNode<T>(
       (inputs: Node<T>[]) => 
-          new Node({type: ty + type, family:type, params: params, connections: inputs.map(n => n.node)})
+          new Node({type: ty + type, family:type, params: params === undefined ? {} : params, connections: inputs.map(n => n.node)})
     )
 
 export const top = op<"TOP">("TOP")
@@ -107,6 +107,12 @@ export const xyzp = (v0: IParam<"float">, v1: IParam<"float">, v2: IParam<"float
   assert.ok(v2.type == "float", "xyz requires float params")
   return ({  type: "xyz", value0: v0.value0, value1: v1.value0, value2: v2.value0 })
 }
+export const rgbp = (v0: IParam<"float">, v1: IParam<"float">, v2: IParam<"float">) : IParam3<"rgb"> =>  {
+  assert.ok(v0.type == "float", "rgb requires float params")
+  assert.ok(v1.type == "float", "rgb requires float params")
+  assert.ok(v2.type == "float", "rgb requires float params")
+  return ({  type: "rgb", value0: v0.value0, value1: v1.value0, value2: v2.value0 })
+}
 export const xyzwp = (v0: IParam<"float">, v1: IParam<"float">, v2: IParam<"float">, v3: IParam<"float">) : IParam4<"xyzw"> =>  {
   assert.ok(v0.type == "float", "xyzw requires float params")
   assert.ok(v1.type == "float", "xyzw requires float params")
@@ -118,36 +124,20 @@ export const whp = (v0: IParam<"number">, v1: IParam<"number">) : IParam2<"wh"> 
   assert.ok(v0.type == "number" && v1.type == "number", "wh requires number params")
   return ({  type: "wh", value0: v0.value0, value1: v1.value0 })
 }
-export const topp = (v: Node<"TOP">) : IParam<"TOP"> => {
-  let out = v.out()
-  assert.equal("TOP", out.family, "param and op family must match")
-  return {  type: "TOP", value0: ['\"', out, '\"'] }
-}
-export const datp = (v: Node<"DAT">) : IParam<"DAT"> => {
-  let out = v.out()
-  assert.equal("DAT", out.family, "param and op family must match")
-  return {  type: "DAT", value0: ['\"', out, '\"'] }
-}
-export const chopp = (v: Node<"CHOP">) : IParam<"CHOP"> => {
-  let out = v.out()
-  assert.equal("CHOP", out.family, "param and op family must match")
-  return {  type: "CHOP", value0: ['\"', out, '\"'] }
-}
-export const sopp = (v: Node<"SOP">) : IParam<"SOP"> => {
-  let out = v.out()
-  assert.equal("SOP", out.family, "param and op family must match")
-  return {  type: "SOP", value0: ['\"', out, '\"'] }
-}
-export const matp = (v: Node<"MAT">) : IParam<"MAT"> => {
-  let out = v.out()
-  assert.equal("MAT", out.family, "param and op family must match")
-  return {  type: "MAT", value0: ['\"', out, '\"'] }
-}
-export const compp = (v: Node<"COMP">) : IParam<"COMP"> => {
-  let out = v.out()
-  assert.equal("COMP", out.family, "param and op family must match")
-  return {  type: "COMP", value0: ['\"', out, '\"'] }
-}
+
+
+const opp = <T extends OP>(type: T) => 
+  (n: Node<T>[]) =>  {
+    assert.equal(type, n[0].out().family, "param and op family must match")
+    return { type: type, value0: (['\"'] as (string | INode)[]).concat(n.map(n => n.out()), ['\"']) }
+  }
+
+export const topp = opp("TOP")
+export const datp = opp("DAT")
+export const chopp = opp("CHOP")
+export const sopp = opp("SOP")
+export const matp = opp("MAT")
+export const compp = opp("COMP")
 
 export const chan = (i: IParam<"number" | "string">, v: Node<"CHOP">): IParam<"float"> => {
   let out = v.out()
@@ -156,10 +146,10 @@ export const chan = (i: IParam<"number" | "string">, v: Node<"CHOP">): IParam<"f
   return ({ type: "float", value0: ['op(\"', v.out(), '\")['].concat(i.value0, [']'])})
 }
 
-const mathopp = (t: string) =>  (a: IParam<"float">, b: IParam<"float">): IParam<"float"> => {
-  assert.equal("float", a.type, "mult is a float op")
-  assert.equal("float", b.type, "mult is a float op")
-  return { type: "float", value0: (["( "] as Array<string | INode>).concat(a.value0, [ " " + t + " " ], b.value0, [" )"])}
+const mathopp = <T extends ("number" | "float")>(t: string) =>  (a: IParam<T>, b: IParam<T>): IParam<T> => {
+  assert.ok("float" === a.type || "number" === b.type, "mult is a float or integer op")
+  assert.equal(a.type, b.type, "mult ops match")
+  return { type: a.type, value0: (["( "] as Array<string | INode>).concat(a.value0, [ " " + t + " " ], b.value0, [" )"])}
 }
 
 export const multp = mathopp("*")
