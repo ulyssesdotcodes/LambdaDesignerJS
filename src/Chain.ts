@@ -146,9 +146,11 @@ export const chan = (i: IParam<"number" | "string">, v: Node<"CHOP">): IParam<"f
   return ({ type: "float", value0: ['op(\"', v.out(), '\")['].concat(i.value0, [']'])})
 }
 
+export const chan0 = (chop) => chan(ip(0), chop)
+
 const mathopp = <T extends ("number" | "float")>(t: string) =>  (a: IParam<T>, b: IParam<T>): IParam<T> => {
-  assert.ok("float" === a.type || "number" === b.type, "mult is a float or integer op")
-  assert.equal(a.type, b.type, "mult ops match")
+  assert.ok("float" === a.type || "number" === b.type, t + "is a float or integer op")
+  assert.equal(a.type, b.type, t + " ops match")
   return { type: a.type, value0: (["( "] as Array<string | INode>).concat(a.value0, [ " " + t + " " ], b.value0, [" )"])}
 }
 
@@ -169,6 +171,7 @@ export const funcp2 = (f: string) => (a: IParam<"float">, b: IParam<"float">) =>
 
 export const absp = funcp("abs")
 export const clampp = funcp2("clamp")
+export const floorp = funcp("floor")
 
 export const x4p = (v0: IParam<"float">) : IParam4<"xyzw"> =>  {
   assert.ok(v0.type == "float", "xyzw requires float params")

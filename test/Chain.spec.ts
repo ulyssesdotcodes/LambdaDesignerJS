@@ -59,7 +59,7 @@ describe('Chain', () =>  {
     expect(n).to.eql({ family: "TOP", type: "rectangleTOP", params: {"size": { type: "xy", value0: ["0.5"], value1:["0.5"]}}, connections:[]})
   })
   it('can make node params', () => {
-    const n = chain.chop("select", {"chop" : chain.chopp(chain.chop("wave",{"rate" : chain.fp(1)}).run([]))}).out()
+    const n = chain.chop("select", {"chop" : chain.chopp([chain.chop("wave",{"rate" : chain.fp(1)}).run([])])}).out()
     let c1 = { family: "CHOP", type: "waveCHOP", params: {"rate": { type: "float", value0: ["1"]}}, connections:[]}
     expect(n).to.eql({ family: "CHOP", type: "selectCHOP", params: {"chop": { type: "CHOP", value0: ['\"', c1, '\"']}}, connections:[]})
   })

@@ -25,7 +25,8 @@ export function validateNode(node: INode) : Either<string[], INode> {
 }
 
 export function testConnection(type: string, family: string, connection:INode) : Either<string[], INode> {
-    return connection.family == family || family == "COMP" ? validateNode(connection) : left(["expected '" + family + "' as '" + type + "' child but got '" + connection.family + "'"])
+    return connection === undefined ? left(["connection undefined for " + type]) : 
+        (connection.family == family || family == "COMP" || connection.family == "COMP" ? validateNode(connection) : left(["expected '" + family + "' as '" + type + "' child but got '" + connection.family + "'"]))
 }
  
 export function testParams(type: string, params: {[name: string] : IParamAny }) : Either<string[], {[name: string] : any}> {
@@ -36,10 +37,13 @@ export function testParams(type: string, params: {[name: string] : IParamAny }) 
 
 function testParam(type: string, name: string, param: IParamAny): Either<string[], IParamAny> {
     return right<string[], IParamAny>(param)
-        .chain(p => (name in parsedops[type].pars) ? 
+        .chain(p => p === undefined ? 
+            left<string[], IParamAny>(["param unefined in '" + type + "'"]) : right<string[], IParamAny>(p) 
+        )
+        .chain(p => (name in parsedops[type].pars) || type == "baseCOMP" ? 
             right<string[], IParamAny>(p) : left<string[], IParamAny>(["param '" + name +"' does not exist for type '" + type + "'"])
         )
-        .chain(p => param.type !== parsedops[type].pars[name].type && !(parsedops[type].pars[name].type == "OP" && OPTypes.indexOf(param.type) > -1) ? 
+        .chain(p => type != "baseCOMP" && param.type !== parsedops[type].pars[name].type && !(parsedops[type].pars[name].type == "OP" && OPTypes.indexOf(param.type) > -1) ? 
             left<string[], IParamAny>(["param type is not correct for '" + type +"." + name + "'"]) : right<string[], IParamAny>(p)
         )
         .chain(p => fpa.array.reduce(p.value0, right(p), (acc, b) => acc.chain(c => typeof b === "string" ? right(p) : validateNode(b as INode).map(_ => c))))

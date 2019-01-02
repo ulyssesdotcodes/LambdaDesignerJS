@@ -1,7 +1,8 @@
 import { expect } from 'chai';
-import { parseJSON } from '../src'
+import { parseJSON, validateNode } from '../src'
 import { isRight, right, isLeft, left } from 'fp-ts/lib/Either'
 import * as t from 'io-ts'
+import * as c from '../src/Chain'
 
 describe('Validate', () => {
     it('errors if invalid json', () => {
@@ -217,5 +218,14 @@ describe('Validate', () => {
         })
         const n = parseJSON(jsonn)
         expect(n.mapLeft(n => n[0]).fold<any>(t.identity, t.identity)).to.equal("too few inputs for node 'audiofilterCHOP'")
+    });
+    it('doesn\'t error on base comp params', () =>{
+
+        let vol = c.chan(c.ip(0), c.chope("audiodevicein")
+            .connect(c.chop("select", {channames: c.sp("chan1")}))
+            .connect(c.chop("resample", {"timeslice": c.tp(false), "method": c.mp(0), "relative": c.mp(0), "end": c.fp(0.03)}))
+            .connect(c.chop("math", {"gain": c.fp(2)})).connect(c.chop('analyze', {"function": c.mp(6)})).runT())
+        let n = c.comp("base", Object.assign({externaltox: c.sp("test")}, {Test: vol}))
+        expect(validateNode(n.out()).map(n => n.type).fold<any>(t.identity, t.identity)).to.equal("baseCOMP")
     });
 })
