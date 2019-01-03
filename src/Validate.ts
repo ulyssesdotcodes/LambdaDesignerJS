@@ -11,8 +11,12 @@ export function parseJSON(data: string) : Either<string[], INode> {
             .chain(d => validateNode(d))
 }
 
-export function validateNode(node: INode) : Either<string[], INode> {
-    return right<Errors, INode>(node)
+export function validateNode(node: INode) : Either<string[], INode>{
+  return validateNodes([node]).map(ns => ns[0]);
+}
+
+export function validateNodes(nodes: INode[]) : Either<string[], INode[]> {
+    return fpa.array.reduce<INode, Either<string[], INode[]>>(nodes, right([]), (acc, node) => acc.chain(accnodes => right<Errors, INode>(node)
             .mapLeft<string[]>(n => PathReporter.report(left(n)))
             .chain<INode>(n => n.type in parsedops ? right(n) : left(["type '" + n.type + "' does not exist"]))
             .chain<INode>(n => parsedops[n.type].type == n.family ? right(n) : left(["type '" + n.family + "' is not correct for '" + n.type + "'"]))
@@ -22,6 +26,7 @@ export function validateNode(node: INode) : Either<string[], INode> {
             .chain<INode>(n => fpa.array.reduce<INode, Either<string[], INode>>(n.connections, right(n), (b, c) => 
                 b.chain(_ => testConnection(n.type, n.family, c)).chain(_ => b)
             ))
+            .map(n => accnodes.concat([n]))))
 }
 
 export function testConnection(type: string, family: string, connection:INode) : Either<string[], INode> {

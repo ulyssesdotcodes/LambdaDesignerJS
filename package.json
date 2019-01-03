@@ -30,13 +30,10 @@
   },
   "dependencies": {
     "@types/deep-equal": "^1.0.1",
-    "@types/node": "^10.12.9",
-    "@types/socket.io": "^2.1.0",
     "deep-equal": "^1.0.1",
     "express": "^4.16.4",
     "fp-ts": "^1.10.0",
     "guid-typescript": "^1.0.9",
-    "io-ts": "^1.4.1",
-    "socket.io": "^2.1.1"
+    "io-ts": "^1.4.1"
   }
 }

@@ -30,9 +30,11 @@ function dictname(optype: string, opidx: number): string {
 }
 
 export function nodeToJSON(node: INode) : string {
-    let nodedict : NodeDict = {};
-    addNode(nodedict, node)
-    return nodedictout(nodedict);
+    return nodesToJSON([node]);
+}
+
+export function nodesToJSON(nodes: INode[]) : string {
+    return nodedictout(nodes.reduce((acc, val) => addToNodeDict(acc, val), {}));
 }
 
 function instanceofFBTargetNode(node: INode): node is FBTargetNode {
@@ -41,6 +43,11 @@ function instanceofFBTargetNode(node: INode): node is FBTargetNode {
 
 function instanceofFBNode(node: INode): node is FBNode {
     return 'id' in node;
+}
+
+function addToNodeDict(nodedict: NodeDict, node: INode) : NodeDict {
+    addNode(nodedict, node);
+    return nodedict
 }
 
 function addNode(nodedict: NodeDict, node: INode) : [string, number] {

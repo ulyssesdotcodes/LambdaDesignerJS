@@ -50484,7 +50484,7 @@
         "type": "string"
       },
       "interface": {
-        "type": "pulse"
+        "type": "menu"
       },
       "routingtable": {
         "type": "DAT"
