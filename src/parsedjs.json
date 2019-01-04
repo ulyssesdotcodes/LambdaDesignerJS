@@ -42918,7 +42918,7 @@
         ]
       },
       "port": {
-        "type": "pulse"
+        "type": "string"
       },
       "fromop": {
         "type": "OP"
