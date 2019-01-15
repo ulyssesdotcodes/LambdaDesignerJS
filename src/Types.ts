@@ -25,7 +25,7 @@ import { connect } from 'http2';
 //     ])
 // export type ParamType = t.TypeOf<typeof ParamTypes>
 
-export type ParamType = "number" | "float" | "string" | "toggle" | "menu" | "TOP" | "DAT" | "MAT" | "CHOP" | "COMP" | "SOP" | "OP"
+export type ParamType = "number" | "float" | "string" | "toggle" | "menu" | "TOP" | "DAT" | "MAT" | "CHOP" | "COMP" | "SOP" | "OP" | "pulse"
 
 export type ParamType2 = "xy" | "uv" | "wh"
 export type ParamType3 = "xyz" | "uvw" | "rgb"
@@ -55,17 +55,26 @@ export interface IParam4<T extends ParamType4> {
     value3: Array<string | INode>
 }
 
+export type IParamAny = IParam<ParamType> | IParam2<ParamType2> | IParam3<ParamType3> | IParam4<ParamType4>
+
 export type OP = "TOP" | "CHOP" | "MAT" | "SOP" | "COMP" | "DAT"
 export const OPTypes = ["TOP", "CHOP", "MAT", "SOP", "COMP", "DAT"]
 
-export type IParamAny = IParam<ParamType> | IParam2<ParamType2> | IParam3<ParamType3> | IParam4<ParamType4>
+
+export interface PulseAction {
+  type: "pulse",
+  param: string,
+  val: number,
+  frames: number
+}
 
 export interface INode {
     family: OP
     type: string
     params: { [name: string] : IParamAny }
     connections: Array<INode>
-    text?: string
+    text?: string,
+    actions: PulseAction[]
 }
 
 export interface NodeConnectFunc<T extends OP> {
@@ -81,8 +90,8 @@ export class DisconnectedNode<T extends OP> {
   c(n: DisconnectedNode<T>) : DisconnectedNode<T> {
     return this.connect(n);
   }
-  run(inputs: Node<T>[]): Node<T> {
-    return this.revConnect(inputs)
+  run(inputs: (Node<T>| DisconnectedNode<T>)[]): Node<T> {
+    return this.revConnect(inputs.map(n => n.runT()))
   }
   runT(): Node<T>{
     return this.run([])

@@ -1,4 +1,4 @@
-import { FBNode, FBTargetNode, INode, IParamAny, IParam, OP, ParamType } from './Types'
+import { FBNode, FBTargetNode, INode, IParamAny, IParam, OP, ParamType, PulseAction } from './Types'
 import { option, none, isNone } from 'fp-ts/lib/Option'
 import { StrMap, strmap } from 'fp-ts/lib/StrMap'
 import { array } from 'fp-ts/lib/Array'
@@ -6,13 +6,19 @@ import deepEqual from 'deep-equal'
 import { isString } from 'util';
 import { Guid } from 'guid-typescript'
 
+interface ParsedAction { 
+    command: string, 
+    args: (string | number)[]
+}
+
 interface ParsedNode {
     optype: OP,
     ty: string,
     parameters: {[name: string] : string },
     connections: Array<string>,
     fbid?: Guid
-    text?: string
+    text?: string,
+    commands: ParsedAction[]
 }
 
 type NodeDict = { [optype: string] : Array<ParsedNode>}
@@ -55,7 +61,8 @@ function addNode(nodedict: NodeDict, node: INode) : [string, number] {
         ty: node.type,
         optype: node.family,
         parameters: array.reduce(Object.keys(node.params), {}, (acc, p) => addParameter(nodedict, acc, p, node.params[p])),
-        connections: []
+        connections: [],
+        commands: node.actions.map(addAction(nodedict))
     }
 
     if(instanceofFBNode(node)) {
@@ -128,6 +135,15 @@ function addParameter(nodedict: NodeDict, parameters: {[name: string]: string},
         parameters[name] = parseParamValue(nodedict, param.value0);
     }
     return parameters
+}
+
+function addAction(nodedict: NodeDict) {
+    return (action: PulseAction) : ParsedAction => {
+        return {
+            command: action.type,
+            args: [action.param, action.val, action.frames]
+        }
+    }
 }
 
 function parseParamValue(nodedict: NodeDict, value: Array<string | INode>) : string | undefined {

@@ -18,7 +18,7 @@ const op = <T extends OP>(type: T) =>
   (ty: string, params: { [name: string] : IParamAny}) => 
     new DisconnectedNode<T>(
       (inputs: Node<T>[]) => 
-          new Node({type: ty + type, family:type, params: params === undefined ? {} : params, connections: inputs.map(n => n.node)})
+          new Node({type: ty + type, family:type, actions: [], params: params === undefined ? {} : params, connections: inputs.map(n => n.node)})
     )
 
 export const top = op<"TOP">("TOP")
@@ -57,11 +57,11 @@ export const node = <T extends OP, R extends INode>(n: R) => {
 }
 
 export const feedbacktop = (): DisconnectedNode<"TOP"> => {
-  return cc((inputs) => node({ family: "TOP", type: "feedbackTOP", special: "FB", id: Guid.create(), connections: inputs.map(i => i.out()), params: {}}))
+  return cc((inputs) => node({ family: "TOP", type: "feedbackTOP", special: "FB", id: Guid.create(), actions: [], connections: inputs.map(i => i.out()), params: {}}))
 }
 
 export const feedbacktarget = (fbg: Guid, optype: string, params: {[name: string] : IParamAny}) : DisconnectedNode<"TOP"> => {
-  return cc((inputs) => node({special: "FBT", selects: [fbg], connections: inputs.map(i => i.out()), params: params, type: optype + "TOP", family: "TOP"}))
+  return cc((inputs) => node({special: "FBT", selects: [fbg], actions: [], connections: inputs.map(i => i.out()), params: params, type: optype + "TOP", family: "TOP"}))
 }
 
 export const feedbackChain = (middle: DisconnectedNode<"TOP">) : DisconnectedNode<"TOP"> => {
@@ -69,7 +69,7 @@ export const feedbackChain = (middle: DisconnectedNode<"TOP">) : DisconnectedNod
     let fbt = feedbacktop()
     let baseop = (id: Guid) => cc<"TOP">((inputs) => {
       let basemiddle = middle.run(inputs).out()
-      return node({special: "FBT", selects: [id], connections: basemiddle.connections, params: middle.run(inputs).out().params, type: middle.out().type, family: "TOP"})
+      return node({special: "FBT", selects: [id], actions: [], connections: basemiddle.connections, params: middle.run(inputs).out().params, type: middle.out().type, family: "TOP"})
     })
     return fbt.connect(cc((inputs) => baseop((inputs[0].node as FBNode).id).run(inputs))).run(inputs)
   })
@@ -125,11 +125,21 @@ export const whp = (v0: IParam<"number">, v1: IParam<"number">) : IParam2<"wh"> 
   return ({  type: "wh", value0: v0.value0, value1: v1.value0 })
 }
 
+const cast = <T extends ParamType>(ty: T, op: string) => (v: IParam<ParamType>): IParam<T> => ({
+  type: ty,
+  value0: ([op, "("] as (string | INode)[]).concat(v.value0, [")"])
+})
+
+export const casti = cast("number", "int")
+export const castf = cast("float", "float")
+export const casts = cast("string", "str")
+export const castp = cast("pulse", "int")
+
 
 const opp = <T extends OP>(type: T) => 
-  (n: Node<T>[]) =>  {
+  (n: (Node<T> | DisconnectedNode<T>)[]) =>  {
     assert.equal(type, n[0].out().family, "param and op family must match")
-    return { type: type, value0: (['\"'] as (string | INode)[]).concat(n.map(n => n.out()), ['\"']) }
+    return { type: type, value0: (['\"'] as (string | INode)[]).concat(n.map(n => n.runT().out()), ['\"']) }
   }
 
 export const topp = opp("TOP")
