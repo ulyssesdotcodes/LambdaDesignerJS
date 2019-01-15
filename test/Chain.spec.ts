@@ -50,6 +50,10 @@ describe('Chain', () =>  {
     expect(isLeft(n)).to.be.true
     expect(n.fold<any>(t.identity, t.identity)).to.eql(["too many inputs for node 'audiodeviceinCHOP'"])
   })
+  it('can make node with actions', () => {
+    const n = chain.chop("wave", {}, [{type: "pulse", param: "reset", val: 1.2, frames: 2}]).out()
+    expect(n).to.eql({ family: "CHOP", type: "waveCHOP", params: {}, actions: [{type: "pulse", param: "reset", val: 1.2, frames: 2}], connections: []})
+  })
   it('can make params', () => {
     const n = chain.chop("wave",{"rate" : chain.fp(1)}).out()
     expect(n).to.eql({ family: "CHOP", type: "waveCHOP", params: {"rate": { type: "float", value0: ["1"]}}, actions: [], connections:[]})

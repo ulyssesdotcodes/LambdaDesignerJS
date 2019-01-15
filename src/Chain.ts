@@ -1,4 +1,4 @@
-import { DisconnectedNode, Node, NodeConnectFunc, FBNode, FBTargetNode, INode, OP, IParamAny, IParam, IParam2, IParam3, IParam4, ParamType } from './Types'
+import { DisconnectedNode, Node, NodeConnectFunc, FBNode, FBTargetNode, INode, OP, IParamAny, IParam, IParam2, IParam3, IParam4, ParamType, PulseAction } from './Types'
 import { strict } from 'assert';
 import * as fpt from 'fp-ts/lib/Tree'
 import * as assert from 'assert'
@@ -15,24 +15,24 @@ import { Guid } from 'guid-typescript'
 // New chain mechanism
 
 const op = <T extends OP>(type: T) => 
-  (ty: string, params: { [name: string] : IParamAny}) => 
+  (ty: string, params: { [name: string] : IParamAny}, actions: PulseAction[] = []) => 
     new DisconnectedNode<T>(
       (inputs: Node<T>[]) => 
-          new Node({type: ty + type, family:type, actions: [], params: params === undefined ? {} : params, connections: inputs.map(n => n.node)})
+          new Node({type: ty + type, family:type, actions: actions, params: params === undefined ? {} : params, connections: inputs.map(n => n.node)})
     )
 
 export const top = op<"TOP">("TOP")
-export const tope = (optype: string) => op<"TOP">("TOP")(optype, {})
+export const tope = (optype: string) => op<"TOP">("TOP")(optype, {}, [])
 export const dat = op<"DAT">("DAT")
-export const date = (optype: string) => op<"DAT">("DAT")(optype, {})
+export const date = (optype: string) => op<"DAT">("DAT")(optype, {}, [])
 export const chop = op<"CHOP">("CHOP")
-export const chope = (optype: string) => op<"CHOP">("CHOP")(optype, {})
+export const chope = (optype: string) => op<"CHOP">("CHOP")(optype, {}, [])
 export const sop = op<"SOP">("SOP")
-export const sope = (optype: string) => op<"SOP">("SOP")(optype, {})
+export const sope = (optype: string) => op<"SOP">("SOP")(optype, {}, [])
 export const mat = op<"MAT">("MAT")
-export const mate = (optype: string) => op<"MAT">("MAT")(optype, {})
+export const mate = (optype: string) => op<"MAT">("MAT")(optype, {}, [])
 export const comp = op<"COMP">("COMP")
-export const compe = (optype: string) => op<"COMP">("COMP")(optype, {})
+export const compe = (optype: string) => op<"COMP">("COMP")(optype, {}, [])
 
 // export const replacetop = new ReplaceTree<"TOP">(tope("null").value, [])
 // export const replacechop = new ReplaceTree<"CHOP">(chope("null").value, [])
