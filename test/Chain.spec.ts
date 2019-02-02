@@ -58,6 +58,14 @@ describe('Chain', () =>  {
     const n = chain.chop("wave",{"rate" : chain.fp(1)}).out()
     expect(n).to.eql({ family: "CHOP", type: "waveCHOP", params: {"rate": { type: "float", value0: ["1"]}}, actions: [], connections:[]})
   })
+  it('can parse number params', () => {
+    const n = chain.chop("wave",{"rate" : 1}).out()
+    expect(n).to.eql({ family: "CHOP", type: "waveCHOP", params: {"rate": 1 }, actions: [], connections:[]})
+  })
+  it('can parse text params', () => {
+    const n = chain.top("text",{"text" : "hi"}).out()
+    expect(n).to.eql({ family: "TOP", type: "textTOP", params: {"text": "hi" }, actions: [], connections:[]})
+  })
   it('can cast params', () => {
     const n = chain.top("text",{"text" : chain.casts(chain.fp(1))}).out()
     expect(n).to.eql({ family: "TOP", type: "textTOP", params: {"text": { type: "string", value0: ["str", "(", "1", ")"]}}, actions: [], connections:[]})

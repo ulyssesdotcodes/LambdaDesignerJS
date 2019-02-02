@@ -3,6 +3,7 @@ import { parseJSON, validateNode } from '../src'
 import { isRight, right, isLeft, left } from 'fp-ts/lib/Either'
 import * as t from 'io-ts'
 import * as c from '../src/Chain'
+import {IParamAny} from '../src/Types'
 
 describe('Validate', () => {
     it('errors if invalid json', () => {
@@ -57,7 +58,28 @@ describe('Validate', () => {
             connections: []
         })
         const n = parseJSON(jsonn)
-        expect(n.map(n => n.params["rate"].value0[0]).fold<any>(t.identity, t.identity)).to.equal("1.0")
+        expect(n.map(n => (<IParamAny>n.params["rate"]).value0[0]).fold<any>(t.identity, t.identity)).to.equal("1.0")
+    });
+    it('can have number param', ()=> {
+        let jsonn = JSON.stringify({
+            family: "CHOP",
+            type: "waveCHOP",
+            params: {"rate" : 1 },
+            connections: []
+        })
+        const n = parseJSON(jsonn)
+        console.log(n)
+        expect(n.map(n => (<IParamAny>n.params["rate"])).fold<any>(t.identity, t.identity)).to.equal(1)
+    });
+    it('can have string param', ()=> {
+        let jsonn = JSON.stringify({
+            family: "TOP",
+            type: "textTOP",
+            params: {"text" : "hi" },
+            connections: []
+        })
+        const n = parseJSON(jsonn)
+        expect(n.map(n => (<IParamAny>n.params["text"])).fold<any>(t.identity, t.identity)).to.equal("hi")
     });
     it('can have multivalue params', ()=> {
         let jsonn = JSON.stringify({

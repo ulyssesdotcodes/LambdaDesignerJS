@@ -1,4 +1,4 @@
-import { DisconnectedNode, Node, NodeConnectFunc, FBNode, FBTargetNode, INode, OP, IParamAny, IParam, IParam2, IParam3, IParam4, ParamType, PulseAction } from './Types'
+import { DisconnectedNode, Node, NodeConnectFunc, FBNode, FBTargetNode, INode, OP, IParamAny, IParam, IParam2, IParam3, IParam4, ParamType, PulseAction, Paramable } from './Types'
 import { strict } from 'assert';
 import * as fpt from 'fp-ts/lib/Tree'
 import * as assert from 'assert'
@@ -15,10 +15,15 @@ import { Guid } from 'guid-typescript'
 // New chain mechanism
 
 const op = <T extends OP>(type: T) => 
-  (ty: string, params: { [name: string] : IParamAny}, actions: PulseAction[] = []) => 
+  (ty: string, params: { [name: string] : Paramable}, actions: PulseAction[] = []) => 
     new DisconnectedNode<T>(
       (inputs: Node<T>[]) => 
-          new Node({type: ty + type, family:type, actions: actions, params: params === undefined ? {} : params, connections: inputs.map(n => n.node)})
+          (new Node({
+            type: ty + type, 
+            family:type, 
+            actions: actions, 
+            params: params === undefined ? {} : params, 
+            connections: inputs.map(n => n.node)}))
     )
 
 export const top = op<"TOP">("TOP")
@@ -181,7 +186,7 @@ export const funcp2 = (f: string) => (a: IParam<"float">, b: IParam<"float">) =>
 
 export const absp = funcp("abs")
 export const clampp = funcp2("clamp")
-export const floorp = funcp("floor")
+export const floorp = funcp("math.floor")
 export const sinp = funcp("math.sin")
 export const cosp = funcp("math.cos")
 export const tanp = funcp("math.tan")

@@ -3,28 +3,6 @@ import * as fpt from 'fp-ts/lib/Tree'
 import { Guid } from 'guid-typescript'
 import { connect } from 'http2';
 
-// const ParamTypes = t.union([
-//         t.literal("number"), 
-//         t.literal("float"), 
-//         t.literal("string"), 
-//         t.literal("toggle"), 
-//         t.literal("menu"), 
-//         t.literal("xy"), 
-//         t.literal("wh"), 
-//         t.literal("uv"), 
-//         t.literal("xyz"), 
-//         t.literal("rgb"), 
-//         t.literal("rgba"), 
-//         t.literal("TOP"),
-//         t.literal("DAT"),
-//         t.literal("MAT"),
-//         t.literal("CHOP"),
-//         t.literal("COMP")
-//         t.literal("SOP"),
-//         t.literal("OP")
-//     ])
-// export type ParamType = t.TypeOf<typeof ParamTypes>
-
 export type ParamType = "number" | "float" | "string" | "toggle" | "menu" | "TOP" | "DAT" | "MAT" | "CHOP" | "COMP" | "SOP" | "OP" | "pulse"
 
 export type ParamType2 = "xy" | "uv" | "wh"
@@ -56,6 +34,7 @@ export interface IParam4<T extends ParamType4> {
 }
 
 export type IParamAny = IParam<ParamType> | IParam2<ParamType2> | IParam3<ParamType3> | IParam4<ParamType4>
+export type Paramable =  IParamAny | string | number
 
 export type OP = "TOP" | "CHOP" | "MAT" | "SOP" | "COMP" | "DAT"
 export const OPTypes = ["TOP", "CHOP", "MAT", "SOP", "COMP", "DAT"]
@@ -71,7 +50,7 @@ export interface PulseAction {
 export interface INode {
     family: OP
     type: string
-    params: { [name: string] : IParamAny }
+    params: { [name: string] : Paramable }
     connections: Array<INode>
     text?: string,
     actions: PulseAction[]

@@ -38,6 +38,32 @@ describe('JSON', () => {
 
         expect(parsed).to.equal("{\"/waveCHOP_0\":{\"ty\":\"waveCHOP\",\"optype\":\"CHOP\",\"parameters\":{\"rate\":\"1.0\"},\"connections\":[],\"commands\":[]}}")
     })
+    it('can parse number parameters', ()=>{
+        const n: INode = {
+            family: "CHOP",
+            type: "waveCHOP",
+            params: {"rate": 1},
+            actions: [],
+            connections: []
+        }
+
+        let parsed = nodeToJSON(n);
+
+        expect(parsed).to.equal("{\"/waveCHOP_0\":{\"ty\":\"waveCHOP\",\"optype\":\"CHOP\",\"parameters\":{\"rate\":\"1\"},\"connections\":[],\"commands\":[]}}")
+    })
+    it('can parse string parameters', ()=>{
+        const n: INode = {
+            family: "TOP",
+            type: "textTOP",
+            params: {"text": "hi"},
+            actions: [],
+            connections: []
+        }
+
+        let parsed = nodeToJSON(n);
+
+        expect(parsed).to.equal("{\"/textTOP_0\":{\"ty\":\"textTOP\",\"optype\":\"TOP\",\"parameters\":{\"text\":\"hi\"},\"connections\":[],\"commands\":[]}}")
+    })
     it('can parse xy parameters', ()=>{
         const n: INode = {
             family: "TOP",

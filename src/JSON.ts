@@ -1,9 +1,9 @@
-import { FBNode, FBTargetNode, INode, IParamAny, IParam, OP, ParamType, PulseAction } from './Types'
+import { FBNode, FBTargetNode, INode, IParamAny, IParam, OP, ParamType, PulseAction, Paramable } from './Types'
 import { option, none, isNone } from 'fp-ts/lib/Option'
 import { StrMap, strmap } from 'fp-ts/lib/StrMap'
 import { array } from 'fp-ts/lib/Array'
 import deepEqual from 'deep-equal'
-import { isString } from 'util';
+import { isString, isNumber } from 'util';
 import { Guid } from 'guid-typescript'
 
 interface ParsedAction { 
@@ -106,8 +106,13 @@ function placeInNodeDict(nodedict: NodeDict, node: ParsedNode) : [string, number
 }
 
 function addParameter(nodedict: NodeDict, parameters: {[name: string]: string},
-     name: string, param: IParamAny): {[name: string]: string} {
-    if (param.type == "xy") {
+     name: string, param: Paramable): {[name: string]: string} {
+    if(isString(param)) {
+        parameters[name] = param
+    } else if(isNumber(param)) {
+        parameters[name] = param.toString()
+    }
+    else if (param.type == "xy") {
         parameters[name + "x"] = parseParamValue(nodedict, param.value0)
         parameters[name + "y"] = parseParamValue(nodedict, param.value1)
     } else if (param.type == "uv") {
