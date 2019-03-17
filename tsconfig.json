@@ -8,7 +8,8 @@
         "moduleResolution": "node",
         "rootDir": "src",
         "outDir": "build/",
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+        "declaration": true
     },
     "exclude": [
         "node_modules",
