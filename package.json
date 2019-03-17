@@ -20,7 +20,7 @@
     "@types/mocha": "^5.2.5",
     "browserify": "^16.2.3",
     "chai": "^4.2.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-typescript": "^5.0.0-alpha.3",
     "mocha": "^5.2.0",
     "ts-node": "^7.0.1",
