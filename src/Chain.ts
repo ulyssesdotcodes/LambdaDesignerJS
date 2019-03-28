@@ -177,11 +177,11 @@ export const modp = mathopp("%")
 export const powp = mathopp("**")
 
 export const funcp = (b: string) => (a: IParam<"float">) => {
-  return { type: "float", value0: ([b, "("] as Array<string | INode>).concat(a.value0, [")"])}
+  return { type: "float", value0: ([b, "("] as Array<string | INode>).concat(a.value0, [")"])} as IParam<"float">;
 }
 
 export const funcp2 = (f: string) => (a: IParam<"float">, b: IParam<"float">) => {
-  return { type: "float", value0: ([f, "("] as Array<string | INode>).concat(a.value0, [", "], b.value0, [")"])}
+  return { type: "float", value0: ([f, "("] as Array<string | INode>).concat(a.value0, [", "], b.value0, [")"])} as IParam<"float">;
 }
 
 export const absp = funcp("abs")
