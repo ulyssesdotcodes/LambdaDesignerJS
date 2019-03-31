@@ -15,15 +15,16 @@ import { Guid } from 'guid-typescript'
 // New chain mechanism
 
 const op = <T extends OP>(type: T) => 
-  (ty: string, params: { [name: string] : Paramable}, actions: PulseAction[] = []) => 
+  (ty: string, params: { [name: string] : Paramable} | undefined, actions: PulseAction[] = [], text?: string) => 
     new DisconnectedNode<T>(
       (inputs: Node<T>[]) => 
-          (new Node({
+          (new Node(Object.assign({
             type: ty + type, 
             family:type, 
             actions: actions, 
             params: params === undefined ? {} : params, 
-            connections: inputs.map(n => n.node)}))
+            connections: inputs.map(n => n.node)}, 
+            type === "DAT" && text !== undefined ? { text } : {})))
     )
 
 export const top = op<"TOP">("TOP")

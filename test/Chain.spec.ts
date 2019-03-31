@@ -66,6 +66,10 @@ describe('Chain', () =>  {
     const n = chain.top("text",{"text" : "hi"}).out()
     expect(n).to.eql({ family: "TOP", type: "textTOP", params: {"text": "hi" }, actions: [], connections:[]})
   })
+  it('can parse text data', () => {
+    const n = chain.dat("table", {}, [], "hi").out()
+    expect(n).to.eql({ family: "DAT", type: "tableDAT", params: {}, text: "hi", actions: [], connections:[]})
+  })
   it('can cast params', () => {
     const n = chain.top("text",{"text" : chain.casts(chain.fp(1))}).out()
     expect(n).to.eql({ family: "TOP", type: "textTOP", params: {"text": { type: "string", value0: ["str", "(", "1", ")"]}}, actions: [], connections:[]})
