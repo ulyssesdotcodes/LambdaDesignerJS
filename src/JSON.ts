@@ -1,10 +1,14 @@
 import { FBNode, FBTargetNode, INode, IParamAny, IParam, OP, ParamType, PulseAction, Paramable } from './Types'
 import { option, none, isNone, Option } from 'fp-ts/lib/Option'
-import { StrMap, strmap } from 'fp-ts/lib/StrMap'
-import { array } from 'fp-ts/lib/Array'
+import { StrMap, strmap, lookup, pop } from 'fp-ts/lib/StrMap'
+import { array, intersection, head } from 'fp-ts/lib/Array'
 import deepEqual from 'deep-equal'
 import { isString, isNumber } from 'util';
 import { Guid } from 'guid-typescript'
+import { flatten } from 'fp-ts/lib/Chain';
+import { findFirst, elem, toArray } from 'fp-ts/lib/Foldable2v';
+import { setoidString, Setoid } from 'fp-ts/lib/Setoid';
+import { getFoldableWithIndexComposition } from 'fp-ts/lib/FoldableWithIndex';
 
 interface ParsedAction { 
     command: string, 
@@ -22,17 +26,12 @@ interface ParsedNode {
     unique?: string
 }
 
-type NodeDict = { [optype: string] : Array<ParsedNode>}
+type NodeDict = StrMap<StrMap<ParsedNode>>;
 
-function nodedictout(nd : NodeDict): string {
-    let ops : {[opname: string] : ParsedNode} = {}
-    for(let optype in nd) {
-        nd[optype].forEach((v, idx, arr) => ops[dictname(optype, idx)] = v)
-    }
-    return JSON.stringify(ops)
-}
+const nodedictout = (nd : NodeDict): string =>
+    JSON.stringify(nd.reduceWithKey({}, (optype, out, nodes) => nodes.reduceWithKey(out, (k, outp, n) => outp[dictname(optype,k)] = n)));
 
-function dictname(optype: string, opidx: number): string {
+function dictname(optype: string, opidx: string): string {
     return "/" + optype + "_" + opidx
 }
 
@@ -41,7 +40,7 @@ export function nodeToJSON(node: INode) : string {
 }
 
 export function nodesToJSON(nodes: INode[]) : string {
-    return nodedictout(nodes.reduce((acc, val) => addToNodeDict(acc, val), {}));
+    return nodedictout(nodes.reduce((acc, val) => addToNodeDict(acc, val), new StrMap({}) as StrMap<StrMap<ParsedNode>>));
 }
 
 function instanceofFBTargetNode(node: INode): node is FBTargetNode {
@@ -57,7 +56,7 @@ function addToNodeDict(nodedict: NodeDict, node: INode) : NodeDict {
     return nodedict
 }
 
-function addNode(nodedict: NodeDict, node: INode) : [string, number] {
+function addNode(nodedict: NodeDict, node: INode) : [string, string] {
     let parsednode: ParsedNode = Object.assign({
         ty: node.type,
         optype: node.family,
@@ -75,35 +74,40 @@ function addNode(nodedict: NodeDict, node: INode) : [string, number] {
         parsednode.connections.push("/" + child[0] + "_" + child[1])
     }
 
-    let output : [string, number]= placeInNodeDict(nodedict, parsednode)
+    let output : [string, string]= placeInNodeDict(nodedict, parsednode)
+
+    const setoidGuid: Setoid<Guid> = { equals: (a, b) => a.equals(b)}
 
     if (instanceofFBTargetNode(node)) {
-        for(let fbn of nodedict["feedback" + node.family]) {
-            for(let id of node.selects) {
-                if(fbn.fbid !== undefined && fbn.fbid.equals(id)) {
-                    fbn.parameters["top"] = '"' + output[0] + "_" + output[1] + '"'
-                    fbn.fbid = undefined
-                }
-            }
-        }
+        lookup("feedback" + node.family, nodedict)
+            .chain(ns => findFirst(strmap)(ns, p => elem(setoidGuid, array)(p.fbid, node.selects)).map(fbn => {
+                // TODO: this is really ugly but I can't be bothered to change it. 
+                fbn.parameters["top"] = '"' + output[0] + "_" + output[1] + '"'
+                fbn.fbid = undefined
+            }));
     }
 
     return output;
 }
 
-function placeInNodeDict(nodedict: NodeDict, node: ParsedNode) : [string, number] {
-    if(node.ty in nodedict) {
-        let nodes = nodedict[node.ty];
-        let foundnode = nodes.reduce((acc, n, idx) => isNone(acc) && deepEqual(n, node) ? option.of([n, idx] as [ParsedNode, number]) : acc, none )
-        if(foundnode.isSome() && (!node.unique || node.unique === foundnode.value[0].unique)) {
-            return [node.ty, foundnode.value[1]]
+function placeInNodeDict(nodedict: NodeDict, node: ParsedNode) : [NodeDict, string, string] {
+    const nodesoftype = lookup(node.ty, nodedict);
+    // TODO: Ew ew ew modifying state
+    if(nodesoftype.isSome()) {
+        let foundnode = 
+            nodesoftype.chain(pns => head(toArray(strmap)(pns.mapWithKey((k, pn) => [k, pn] as [string, ParsedNode]).filterWithKey((i, [k, pn]) => deepEqual(pn, node)))))
+                .map(op => op[0]);
+
+        if(foundnode.isSome()) {
+            return [node.ty, foundnode.value]
         }
     } else {
-        nodedict[node.ty] = []
+        nodedict[node.ty] = {};
     }
 
-    nodedict[node.ty].push(node)
-    return [node.ty, nodedict[node.ty].length - 1]
+    const mapid: string = node.unique ? node.unique : nodedict[node.ty].length;
+    nodedict[node.ty][mapid] = node; 
+    return [node.ty, (nodedict[node.ty] - 1).toString()]
 }
 
 function addParameter(nodedict: NodeDict, parameters: {[name: string]: string},
