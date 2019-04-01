@@ -157,7 +157,7 @@ describe('JSON', () => {
 
         let parsed = nodeToJSON(n);
         expect(parsed).to.equal(JSON.stringify({
-            "/waveCHOP_0": {
+            "/waveCHOP_c1": {
                 ty: "waveCHOP",
                 optype: "CHOP",
                 parameters: {"rate": '1.0'},
@@ -165,7 +165,7 @@ describe('JSON', () => {
                 commands: [],
                 unique: "c1"
             },
-            "/waveCHOP_1": {
+            "/waveCHOP_c2": {
                 ty: "waveCHOP",
                 optype: "CHOP",
                 parameters: {"rate": '1.0'},
@@ -177,7 +177,7 @@ describe('JSON', () => {
                 ty: "mathCHOP",
                 optype: "CHOP",
                 parameters: {},
-                connections: ["/waveCHOP_0", "/waveCHOP_1"],
+                connections: ["/waveCHOP_c1", "/waveCHOP_c2"],
                 commands: []
             },
         }));
@@ -210,7 +210,7 @@ describe('JSON', () => {
 
         let parsed = nodeToJSON(n);
         expect(parsed).to.equal(JSON.stringify({
-            "/waveCHOP_0": {
+            "/waveCHOP_c1": {
                 ty: "waveCHOP",
                 optype: "CHOP",
                 parameters: {"rate": '1.0'},
@@ -222,7 +222,7 @@ describe('JSON', () => {
                 ty: "mathCHOP",
                 optype: "CHOP",
                 parameters: {},
-                connections: ["/waveCHOP_0", "/waveCHOP_0"],
+                connections: ["/waveCHOP_c1", "/waveCHOP_c1"],
                 commands: []
             },
         }));

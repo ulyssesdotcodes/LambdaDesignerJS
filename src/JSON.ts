@@ -22,17 +22,17 @@ interface ParsedNode {
     unique?: string
 }
 
-type NodeDict = { [optype: string] : Array<ParsedNode>}
+type NodeDict = { [optype: string] : { [key: string]: ParsedNode }}
 
 function nodedictout(nd : NodeDict): string {
     let ops : {[opname: string] : ParsedNode} = {}
     for(let optype in nd) {
-        nd[optype].forEach((v, idx, arr) => ops[dictname(optype, idx)] = v)
+        Object.entries(nd[optype]).forEach((v, idx) => ops[dictname(optype, v[0])] = v[1])
     }
     return JSON.stringify(ops)
 }
 
-function dictname(optype: string, opidx: number): string {
+function dictname(optype: string, opidx: string): string {
     return "/" + optype + "_" + opidx
 }
 
@@ -57,7 +57,7 @@ function addToNodeDict(nodedict: NodeDict, node: INode) : NodeDict {
     return nodedict
 }
 
-function addNode(nodedict: NodeDict, node: INode) : [string, number] {
+function addNode(nodedict: NodeDict, node: INode) : [string, string] {
     let parsednode: ParsedNode = Object.assign({
         ty: node.type,
         optype: node.family,
@@ -75,10 +75,10 @@ function addNode(nodedict: NodeDict, node: INode) : [string, number] {
         parsednode.connections.push("/" + child[0] + "_" + child[1])
     }
 
-    let output : [string, number]= placeInNodeDict(nodedict, parsednode)
+    let output : [string, string]= placeInNodeDict(nodedict, parsednode)
 
     if (instanceofFBTargetNode(node)) {
-        for(let fbn of nodedict["feedback" + node.family]) {
+        for(let fbn of Object.values(nodedict["feedback" + node.family])) {
             for(let id of node.selects) {
                 if(fbn.fbid !== undefined && fbn.fbid.equals(id)) {
                     fbn.parameters["top"] = '"' + output[0] + "_" + output[1] + '"'
@@ -91,19 +91,20 @@ function addNode(nodedict: NodeDict, node: INode) : [string, number] {
     return output;
 }
 
-function placeInNodeDict(nodedict: NodeDict, node: ParsedNode) : [string, number] {
+function placeInNodeDict(nodedict: NodeDict, node: ParsedNode) : [string, string] {
     if(node.ty in nodedict) {
         let nodes = nodedict[node.ty];
-        let foundnode = nodes.reduce((acc, n, idx) => isNone(acc) && deepEqual(n, node) ? option.of([n, idx] as [ParsedNode, number]) : acc, none )
-        if(foundnode.isSome() && (!node.unique || node.unique === foundnode.value[0].unique)) {
-            return [node.ty, foundnode.value[1]]
+        let foundnode = Object.entries(nodes).reduce((acc, n) => isNone(acc) && deepEqual(n[1], node) ? option.of(n[0]) : acc, none )
+        if (foundnode.isSome()) {
+            return [node.ty, foundnode.value]
         }
     } else {
-        nodedict[node.ty] = []
+        nodedict[node.ty] = {}
     }
 
-    nodedict[node.ty].push(node)
-    return [node.ty, nodedict[node.ty].length - 1]
+    const nodeid = node.unique ? node.unique : (Object.keys(nodedict[node.ty]).length).toString();
+    nodedict[node.ty][nodeid] = node
+    return [node.ty, nodeid]
 }
 
 function addParameter(nodedict: NodeDict, parameters: {[name: string]: string},

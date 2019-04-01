@@ -1,6 +1,6 @@
 {
   "name": "lambda-designer-js",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "LambdaDesigner for node. Create TouchDesigner networks with code.",
   "files": [
     "build"
