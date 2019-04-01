@@ -1,5 +1,5 @@
 import { FBNode, FBTargetNode, INode, IParamAny, IParam, OP, ParamType, PulseAction, Paramable } from './Types'
-import { option, none, isNone } from 'fp-ts/lib/Option'
+import { option, none, isNone, Option } from 'fp-ts/lib/Option'
 import { StrMap, strmap } from 'fp-ts/lib/StrMap'
 import { array } from 'fp-ts/lib/Array'
 import deepEqual from 'deep-equal'
@@ -18,7 +18,8 @@ interface ParsedNode {
     connections: Array<string>,
     fbid?: Guid
     text?: string,
-    commands: ParsedAction[]
+    commands: ParsedAction[],
+    unique?: string
 }
 
 type NodeDict = { [optype: string] : Array<ParsedNode>}
@@ -57,13 +58,13 @@ function addToNodeDict(nodedict: NodeDict, node: INode) : NodeDict {
 }
 
 function addNode(nodedict: NodeDict, node: INode) : [string, number] {
-    let parsednode: ParsedNode = {
+    let parsednode: ParsedNode = Object.assign({
         ty: node.type,
         optype: node.family,
         parameters: array.reduce(Object.keys(node.params), {}, (acc, p) => addParameter(nodedict, acc, p, node.params[p])),
         connections: [],
-        commands: node.actions.map(addAction(nodedict))
-    }
+        commands: node.actions.map(addAction(nodedict)),
+    }, node.text.isNone() ? {} : { text: node.text.value }, node.unique.isNone() ? {} : { unique: node.unique.value });
 
     if(instanceofFBNode(node)) {
         parsednode.fbid = node.id
@@ -93,9 +94,9 @@ function addNode(nodedict: NodeDict, node: INode) : [string, number] {
 function placeInNodeDict(nodedict: NodeDict, node: ParsedNode) : [string, number] {
     if(node.ty in nodedict) {
         let nodes = nodedict[node.ty];
-        let foundnode = nodes.reduce((acc, n, idx) => isNone(acc) && deepEqual(n, node) ? option.of(idx) : acc, none )
-        if(foundnode.isSome()) {
-            return [node.ty, foundnode.value]
+        let foundnode = nodes.reduce((acc, n, idx) => isNone(acc) && deepEqual(n, node) ? option.of([n, idx] as [ParsedNode, number]) : acc, none )
+        if(foundnode.isSome() && (!node.unique || node.unique === foundnode.value[0].unique)) {
+            return [node.ty, foundnode.value[1]]
         }
     } else {
         nodedict[node.ty] = []

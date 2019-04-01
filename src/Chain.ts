@@ -4,6 +4,7 @@ import * as fpt from 'fp-ts/lib/Tree'
 import * as assert from 'assert'
 import { isNumber, isBoolean } from 'util';
 import { Guid } from 'guid-typescript'
+import { Option, none, fromNullable } from 'fp-ts/lib/Option';
 
 // Ops
 
@@ -14,31 +15,36 @@ import { Guid } from 'guid-typescript'
 
 // New chain mechanism
 
+export const constructNodeFromDefault = (n: any): INode =>
+  Object.assign({unique: none, text: none, connections: [], params: {}, actions: []}, n)
+
 const op = <T extends OP>(type: T) => 
-  (ty: string, params: { [name: string] : Paramable} | undefined, actions: PulseAction[] = [], text?: string) => 
+  (ty: string, params: { [name: string] : Paramable} = {}, actions: PulseAction[] = [], unique: string = null, text: string = null) => 
     new DisconnectedNode<T>(
       (inputs: Node<T>[]) => 
-          (new Node(Object.assign({
+          new Node({
             type: ty + type, 
             family:type, 
-            actions: actions, 
-            params: params === undefined ? {} : params, 
-            connections: inputs.map(n => n.node)}, 
-            type === "DAT" && text !== undefined ? { text } : {})))
+            actions, 
+            params, 
+            connections: inputs.map(n => n.node),
+            unique: fromNullable(unique),
+            text: fromNullable(text)
+          })
     )
 
 export const top = op<"TOP">("TOP")
-export const tope = (optype: string) => op<"TOP">("TOP")(optype, {}, [])
+export const tope = (optype: string) => op<"TOP">("TOP")(optype, {})
 export const dat = op<"DAT">("DAT")
-export const date = (optype: string) => op<"DAT">("DAT")(optype, {}, [])
+export const date = (optype: string) => op<"DAT">("DAT")(optype, {})
 export const chop = op<"CHOP">("CHOP")
-export const chope = (optype: string) => op<"CHOP">("CHOP")(optype, {}, [])
+export const chope = (optype: string) => op<"CHOP">("CHOP")(optype, {})
 export const sop = op<"SOP">("SOP")
-export const sope = (optype: string) => op<"SOP">("SOP")(optype, {}, [])
+export const sope = (optype: string) => op<"SOP">("SOP")(optype, {})
 export const mat = op<"MAT">("MAT")
-export const mate = (optype: string) => op<"MAT">("MAT")(optype, {}, [])
+export const mate = (optype: string) => op<"MAT">("MAT")(optype, {})
 export const comp = op<"COMP">("COMP")
-export const compe = (optype: string) => op<"COMP">("COMP")(optype, {}, [])
+export const compe = (optype: string) => op<"COMP">("COMP")(optype, {})
 
 // export const replacetop = new ReplaceTree<"TOP">(tope("null").value, [])
 // export const replacechop = new ReplaceTree<"CHOP">(chope("null").value, [])
@@ -63,11 +69,11 @@ export const node = <T extends OP, R extends INode>(n: R) => {
 }
 
 export const feedbacktop = (): DisconnectedNode<"TOP"> => {
-  return cc((inputs) => node({ family: "TOP", type: "feedbackTOP", special: "FB", id: Guid.create(), actions: [], connections: inputs.map(i => i.out()), params: {}}))
+  return cc((inputs) => node(constructNodeFromDefault({ family: "TOP", type: "feedbackTOP", special: "FB", id: Guid.create(), unique: none, actions: [], connections: inputs.map(i => i.out()), params: {}})))
 }
 
 export const feedbacktarget = (fbg: Guid, optype: string, params: {[name: string] : IParamAny}) : DisconnectedNode<"TOP"> => {
-  return cc((inputs) => node({special: "FBT", selects: [fbg], actions: [], connections: inputs.map(i => i.out()), params: params, type: optype + "TOP", family: "TOP"}))
+  return cc((inputs) => node(constructNodeFromDefault({special: "FBT", selects: [fbg], unique: none, actions: [], connections: inputs.map(i => i.out()), params: params, type: optype + "TOP", family: "TOP"})))
 }
 
 export const feedbackChain = (middle: DisconnectedNode<"TOP">) : DisconnectedNode<"TOP"> => {
@@ -75,7 +81,7 @@ export const feedbackChain = (middle: DisconnectedNode<"TOP">) : DisconnectedNod
     let fbt = feedbacktop()
     let baseop = (id: Guid) => cc<"TOP">((inputs) => {
       let basemiddle = middle.run(inputs).out()
-      return node({special: "FBT", selects: [id], actions: [], connections: basemiddle.connections, params: middle.run(inputs).out().params, type: middle.out().type, family: "TOP"})
+      return node(constructNodeFromDefault({special: "FBT", selects: [id], unique: none, actions: [], connections: basemiddle.connections, params: middle.run(inputs).out().params, type: middle.out().type, family: "TOP"}))
     })
     return fbt.connect(cc((inputs) => baseop((inputs[0].node as FBNode).id).run(inputs))).run(inputs)
   })
