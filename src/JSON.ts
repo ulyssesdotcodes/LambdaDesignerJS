@@ -8,6 +8,7 @@ import { Guid } from 'guid-typescript'
 
 interface ParsedAction { 
     command: string, 
+    delay: number,
     args: (string | number)[]
 }
 
@@ -148,6 +149,7 @@ function addAction(nodedict: NodeDict) {
     return (action: PulseAction) : ParsedAction => {
         return {
             command: action.type,
+            delay: action.delay,
             args: [action.param, action.val, action.frames]
         }
     }

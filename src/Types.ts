@@ -45,7 +45,8 @@ export interface PulseAction {
   type: "pulse",
   param: string,
   val: number,
-  frames: number
+  frames: number,
+  delay: number
 }
 
 export interface INode {
