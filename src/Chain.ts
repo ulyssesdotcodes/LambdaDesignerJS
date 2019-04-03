@@ -2,7 +2,7 @@ import { DisconnectedNode, Node, NodeConnectFunc, FBNode, FBTargetNode, INode, O
 import { strict } from 'assert';
 import * as fpt from 'fp-ts/lib/Tree'
 import * as assert from 'assert'
-import { isNumber, isBoolean } from 'util';
+import { isNumber, isBoolean, isArray } from 'util';
 import { Guid } from 'guid-typescript'
 import { Option, none, fromNullable } from 'fp-ts/lib/Option';
 
@@ -149,9 +149,9 @@ export const castp = cast("pulse", "int")
 
 
 const opp = <T extends OP>(type: T) => 
-  (n: (Node<T> | DisconnectedNode<T>)[]) =>  {
-    assert.equal(type, n[0].out().family, "param and op family must match")
-    return { type: type, value0: (['\"'] as (string | INode)[]).concat(n.map(n => n.runT().out()), ['\"']) }
+  (n: (Node<T> | DisconnectedNode<T>)[] | (Node<T> | DisconnectedNode<T>)) =>  {
+    assert.equal(type, (isArray(n) ? n[0] : n).out().family, "param and op family must match")
+    return { type: type, value0: (['\"'] as (string | INode)[]).concat(isArray(n) ? n.map(n => n.runT().out()) : [n.out()], ['\"']) }
   }
 
 export const topp = opp("TOP")

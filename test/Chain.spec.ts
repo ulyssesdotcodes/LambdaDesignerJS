@@ -57,8 +57,8 @@ describe('Chain', () =>  {
     expect(n.fold<any>(t.identity, t.identity)).to.eql(["too many inputs for node 'audiodeviceinCHOP'"])
   })
   it('can make node with actions', () => {
-    const n = chain.chop("wave", {}, [{type: "pulse", param: "reset", val: 1.2, frames: 2}]).out()
-    expect(n).to.eql(constructDefaultNode({ family: "CHOP", type: "waveCHOP", params: {}, actions: [{type: "pulse", param: "reset", val: 1.2, frames: 2}], connections: []}))
+    const n = chain.chop("wave", {}, [{ type: "pulse", param: "reset", val: 1.2, frames: 2, delay: 0 }]).out()
+    expect(n).to.eql(constructDefaultNode({ family: "CHOP", type: "waveCHOP", params: {}, actions: [{type: "pulse", param: "reset", val: 1.2, frames: 2, delay: 0}], connections: []}))
   })
   it('can make params', () => {
     const n = chain.chop("wave",{"rate" : chain.fp(1)}).out()
@@ -86,6 +86,11 @@ describe('Chain', () =>  {
   })
   it('can make node params', () => {
     const n = chain.chop("select", {"chop" : chain.chopp([chain.chop("wave",{"rate" : chain.fp(1)}).run([])])}).out()
+    let c1 = constructDefaultNode({ family: "CHOP", type: "waveCHOP", params: {"rate": { type: "float", value0: ["1"]}}, actions: [], connections:[]})
+    expect(n).to.eql(constructDefaultNode({ family: "CHOP", type: "selectCHOP", params: {"chop": { type: "CHOP", value0: ['\"', c1, '\"']}}, actions: [], connections:[]}))
+  })
+  it('can make single node params', () => {
+    const n = chain.chop("select", {"chop" : chain.chopp(chain.chop("wave",{"rate" : chain.fp(1)}).run([]))}).out()
     let c1 = constructDefaultNode({ family: "CHOP", type: "waveCHOP", params: {"rate": { type: "float", value0: ["1"]}}, actions: [], connections:[]})
     expect(n).to.eql(constructDefaultNode({ family: "CHOP", type: "selectCHOP", params: {"chop": { type: "CHOP", value0: ['\"', c1, '\"']}}, actions: [], connections:[]}))
   })
