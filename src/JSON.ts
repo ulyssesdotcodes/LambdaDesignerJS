@@ -110,9 +110,9 @@ function placeInNodeDict(nodedict: NodeDict, node: ParsedNode) : [string, string
 
 function addParameter(nodedict: NodeDict, parameters: {[name: string]: string},
      name: string, param: Paramable): {[name: string]: string} {
-    if(isString(param)) {
+    if(typeof param === "string") {
         parameters[name] = param
-    } else if(isNumber(param)) {
+    } else if(typeof param === "number") {
         parameters[name] = param.toString()
     }
     else if (param.type == "xy") {
@@ -161,7 +161,7 @@ function parseParamValue(nodedict: NodeDict, value: Array<string | INode>) : str
             return acc + p;
         } else {
             let addednode = addNode(nodedict, p as INode)
-            return acc + addednode[0] + "_" + addednode[1]
+            return acc + " " + addednode[0] + "_" + addednode[1]
         }
     });
     return val == "" ? undefined : val;

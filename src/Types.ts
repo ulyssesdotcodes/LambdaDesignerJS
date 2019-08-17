@@ -1,7 +1,6 @@
 import * as t from 'io-ts'
 import * as fpt from 'fp-ts/lib/Tree'
 import { Guid } from 'guid-typescript'
-import { connect } from 'http2';
 import { Option } from 'fp-ts/lib/Option';
 
 export type ParamType = "number" | "float" | "string" | "toggle" | "menu" | "TOP" | "DAT" | "MAT" | "CHOP" | "COMP" | "SOP" | "OP" | "pulse"

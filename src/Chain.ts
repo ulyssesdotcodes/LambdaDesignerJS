@@ -143,6 +143,7 @@ const cast = <T extends ParamType>(ty: T, op: string) => (v: IParam<ParamType>):
 })
 
 export const casti = cast("number", "int")
+export const castt = cast("toggle", "bool")
 export const castf = cast("float", "float")
 export const casts = cast("string", "str")
 export const castp = cast("pulse", "int")
@@ -151,7 +152,7 @@ export const castp = cast("pulse", "int")
 const opp = <T extends OP>(type: T) => 
   (n: (Node<T> | DisconnectedNode<T>)[] | (Node<T> | DisconnectedNode<T>)) =>  {
     assert.equal(type, (isArray(n) ? n[0] : n).out().family, "param and op family must match")
-    return { type: type, value0: (['\"'] as (string | INode)[]).concat(isArray(n) ? n.map(n => n.runT().out()) : [n.out()], ['\"']) }
+    return { type: type, value0: (['\"'] as (string | INode)[]).concat(n instanceof Array ? n.map(n => n.runT().out()) : [n.out()], ['\"']) }
   }
 
 export const topp = opp("TOP")
