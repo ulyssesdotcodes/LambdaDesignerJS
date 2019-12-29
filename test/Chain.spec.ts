@@ -5,6 +5,7 @@ import * as t from 'io-ts'
 import { isLeft, isRight } from 'fp-ts/lib/Either';
 import { FBNode, FBTargetNode, INode } from '../src/Types'
 import { none, some } from 'fp-ts/lib/Option';
+import { either } from 'fp-ts';
 
 const constructDefaultNode = (n: any): INode =>
   ({ ...{ params: {}, actions: [], connections:[], unique: none, text: none },
@@ -47,14 +48,14 @@ describe('Chain', () =>  {
   // })
   it('errors if js is invalid', () =>{
     let r = Function('return (function(validate, c){ return validate(c.tope("nope").connect(c.chope("math")).out()) })')()(
-      (n) => validateNode(n).fold<any>(t.identity, t.identity), chain
+      (n) => either.fold(t.identity, t.identity)(validateNode(n)), chain
       ) as any
-    expect(r).to.eql(["expected 'CHOP' as 'mathCHOP' child but got 'TOP'"])
+    expect(r).to.eql("expected 'CHOP' as 'mathCHOP' child but got 'TOP'")
   })
   it('errors if connections length is wrong', () => {
     const n = validateNode(chain.chope("wave").connect(chain.chope("audiodevicein")).out())
     expect(isLeft(n)).to.be.true
-    expect(n.fold<any>(t.identity, t.identity)).to.eql(["too many inputs for node 'audiodeviceinCHOP'"])
+    expect(either.fold<string, INode, string>(t.identity, JSON.stringify)(n)).to.eql("too many inputs for node 'audiodeviceinCHOP'")
   })
   it('can make node with actions', () => {
     const n = chain.chop("wave", {}, [{ type: "pulse", param: "reset", val: 1.2, frames: 2, delay: 0 }]).out()

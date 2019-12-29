@@ -45818,6 +45818,12 @@
       "frame": {
         "type": "toggle"
       },
+      "absframe": {
+        "type": "toggle"
+      },
+      "abssecond": {
+        "type": "toggle"
+      },
       "start": {
         "type": "toggle"
       },

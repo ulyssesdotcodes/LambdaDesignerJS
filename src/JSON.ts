@@ -1,10 +1,8 @@
 import { FBNode, FBTargetNode, INode, IParamAny, IParam, OP, ParamType, PulseAction, Paramable } from './Types'
-import { option, none, isNone, Option } from 'fp-ts/lib/Option'
-import { StrMap, strmap } from 'fp-ts/lib/StrMap'
-import { array } from 'fp-ts/lib/Array'
 import deepEqual from 'deep-equal'
 import { isString, isNumber } from 'util';
 import { Guid } from 'guid-typescript'
+import { option, array } from 'fp-ts';
 
 interface ParsedAction { 
     command: string, 
@@ -62,10 +60,10 @@ function addNode(nodedict: NodeDict, node: INode) : [string, string] {
     let parsednode: ParsedNode = Object.assign({
         ty: node.type,
         optype: node.family,
-        parameters: array.reduce(Object.keys(node.params), {}, (acc, p) => addParameter(nodedict, acc, p, node.params[p])),
+        parameters: array.array.reduce(Object.keys(node.params), {}, (acc, p) => addParameter(nodedict, acc, p, node.params[p])),
         connections: [],
         commands: node.actions.map(addAction(nodedict)),
-    }, node.text.isNone() ? {} : { text: node.text.value }, node.unique.isNone() ? {} : { unique: node.unique.value });
+    }, option.isNone(node.text) ? {} : { text: node.text.value }, option.isNone(node.unique) ? {} : { unique: node.unique.value });
 
     if(instanceofFBNode(node)) {
         parsednode.fbid = node.id
@@ -95,8 +93,8 @@ function addNode(nodedict: NodeDict, node: INode) : [string, string] {
 function placeInNodeDict(nodedict: NodeDict, node: ParsedNode) : [string, string] {
     if(node.ty in nodedict) {
         let nodes = nodedict[node.ty];
-        let foundnode = Object.entries(nodes).reduce((acc, n) => isNone(acc) && deepEqual(n[1], node) ? option.of(n[0]) : acc, none )
-        if (foundnode.isSome()) {
+        let foundnode = Object.entries(nodes).reduce((acc, n) => option.isNone(acc) && deepEqual(n[1], node) ? option.fromNullable(n[0]) : acc, option.none )
+        if (option.isSome(foundnode)) {
             return [node.ty, foundnode.value]
         }
     } else {
@@ -156,7 +154,7 @@ function addAction(nodedict: NodeDict) {
 }
 
 function parseParamValue(nodedict: NodeDict, value: Array<string | INode>) : string | undefined {
-    let val = array.reduce<string | INode, string | undefined>(value, "", (acc, p) => {
+    let val = array.array.reduce<string | INode, string | undefined>(value, "", (acc, p) => {
         if (isString(p)) {
             return acc + p;
         } else {

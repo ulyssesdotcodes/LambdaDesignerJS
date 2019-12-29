@@ -347,14 +347,14 @@ describe('JSON', () => {
             "/choptoTOP_0": {
                 ty: "choptoTOP",
                 optype: "TOP",
-                parameters: {"chop": 'waveCHOP_0'},
+                parameters: {"chop": ' waveCHOP_0'},
                 connections: [],
                 commands: []
             },
             "/choptoTOP_1": {
                 ty: "choptoTOP",
                 optype: "TOP",
-                parameters: {"chop": 'constantCHOP_0'},
+                parameters: {"chop": ' constantCHOP_0'},
                 connections: [],
                 commands: []
             },
@@ -398,7 +398,7 @@ describe('JSON', () => {
         })
 
         let parsed = nodeToJSON(n);
-        expect(parsed).to.equal("{\"/waveCHOP_0\":{\"ty\":\"waveCHOP\",\"optype\":\"CHOP\",\"parameters\":{\"rate\":\"1.0\"},\"connections\":[],\"commands\":[]},\"/selectCHOP_0\":{\"ty\":\"selectCHOP\",\"optype\":\"CHOP\",\"parameters\":{\"chop\":\"\\\"waveCHOP_0\\\"\"},\"connections\":[],\"commands\":[]}}")
+        expect(parsed).to.equal("{\"/waveCHOP_0\":{\"ty\":\"waveCHOP\",\"optype\":\"CHOP\",\"parameters\":{\"rate\":\"1.0\"},\"connections\":[],\"commands\":[]},\"/selectCHOP_0\":{\"ty\":\"selectCHOP\",\"optype\":\"CHOP\",\"parameters\":{\"chop\":\"\\\" waveCHOP_0\\\"\"},\"connections\":[],\"commands\":[]}}")
     })
     it('can parse chan params', ()=>{
         const c1: INode = constructNodeFromDefault({
@@ -417,7 +417,7 @@ describe('JSON', () => {
         })
 
         let parsed = nodeToJSON(n);
-        expect(parsed).to.equal("{\"/waveCHOP_0\":{\"ty\":\"waveCHOP\",\"optype\":\"CHOP\",\"parameters\":{\"rate\":\"1.0\"},\"connections\":[],\"commands\":[]},\"/waveCHOP_1\":{\"ty\":\"waveCHOP\",\"optype\":\"CHOP\",\"parameters\":{\"rate\":\"op(\\\"waveCHOP_0\\\")[0]\"},\"connections\":[],\"commands\":[]}}")
+        expect(parsed).to.equal("{\"/waveCHOP_0\":{\"ty\":\"waveCHOP\",\"optype\":\"CHOP\",\"parameters\":{\"rate\":\"1.0\"},\"connections\":[],\"commands\":[]},\"/waveCHOP_1\":{\"ty\":\"waveCHOP\",\"optype\":\"CHOP\",\"parameters\":{\"rate\":\"op(\\\" waveCHOP_0\\\")[0]\"},\"connections\":[],\"commands\":[]}}")
     })
     it('can parse nested chan params', ()=>{
         const c1: INode = constructNodeFromDefault({
@@ -436,7 +436,7 @@ describe('JSON', () => {
         })
 
         let parsed = nodeToJSON(n);
-        expect(parsed).to.equal("{\"/waveCHOP_0\":{\"ty\":\"waveCHOP\",\"optype\":\"CHOP\",\"parameters\":{},\"connections\":[],\"commands\":[]},\"/rectangleTOP_0\":{\"ty\":\"rectangleTOP\",\"optype\":\"TOP\",\"parameters\":{\"sizex\":\"op(\\\"waveCHOP_0\\\")[0]\",\"sizey\":\"0.2\"},\"connections\":[],\"commands\":[]}}")
+        expect(parsed).to.equal("{\"/waveCHOP_0\":{\"ty\":\"waveCHOP\",\"optype\":\"CHOP\",\"parameters\":{},\"connections\":[],\"commands\":[]},\"/rectangleTOP_0\":{\"ty\":\"rectangleTOP\",\"optype\":\"TOP\",\"parameters\":{\"sizex\":\"op(\\\" waveCHOP_0\\\")[0]\",\"sizey\":\"0.2\"},\"connections\":[],\"commands\":[]}}")
     })
     it('can parse feedback', () => {
         let guid = Guid.create()
