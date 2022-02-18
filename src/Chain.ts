@@ -1,10 +1,13 @@
 import { DisconnectedNode, Node, NodeConnectFunc, FBNode, FBTargetNode, INode, OP, IParamAny, IParam, IParam2, IParam3, IParam4, ParamType, PulseAction, Paramable } from './Types'
-import { strict } from 'assert';
 import * as fpt from 'fp-ts/lib/Tree'
-import * as assert from 'assert'
-import { isNumber, isBoolean, isArray } from 'util';
+// import * as assert from 'assert'
 import { Guid } from 'guid-typescript'
 import { Option, none, fromNullable } from 'fp-ts/lib/Option';
+
+const assert = {
+  ok: (res, str) => {if(!res){throw new Error(str)}},
+  equal: (a, b, str = 'something went wrong') => {if(a !== b){ throw new Error(str); }}
+}
 
 // Ops
 
@@ -88,7 +91,7 @@ export const feedbackChain = (middle: DisconnectedNode<"TOP">) : DisconnectedNod
 }
 
 export const fp = (v: number) : IParam<"float"> =>  {
-  assert.ok(isNumber(v), "float param only takes numbers");
+  assert.ok(typeof v === 'number', "float param only takes numbers");
   return {  type: "float", value0: [String(v)] }
 }
 
@@ -102,7 +105,7 @@ export const sp = (v: string) : IParam<"string"> =>  {
   return ({ type: "string", value0: ['"' + v + '"'] })
 }
 export const tp = (v: boolean) : IParam<"toggle"> => {
-  assert.ok(isBoolean(v), "boolean param only takes booleans");
+  assert.ok(typeof v === 'boolean', "boolean param only takes booleans");
   return {  type: "toggle", value0: [String(v ? 1 : 0)] }
 }
 export const mp = (v: number) : IParam<"menu"> =>  {
@@ -151,7 +154,7 @@ export const castp = cast("pulse", "int")
 
 const opp = <T extends OP>(type: T) => 
   (n: (Node<T> | DisconnectedNode<T>)[] | (Node<T> | DisconnectedNode<T>)) =>  {
-    assert.equal(type, (isArray(n) ? n[0] : n).out().family, "param and op family must match")
+    assert.equal(type, (Array.isArray(n) ? n[0] : n).out().family, "param and op family must match")
     return { type: type, value0: (['\"'] as (string | INode)[]).concat(n instanceof Array ? n.map(n => n.runT().out()) : [n.out()], ['\"']) }
   }
 

@@ -2,7 +2,6 @@ import { INode, Paramable, IParamAny, IParam, ParamType, OPTypes } from './Types
 import { Errors, Validation, string } from 'io-ts'
 import * as parsedops from './parsedjs.json'
 import { PathReporter } from 'io-ts/lib/PathReporter';
-import { isString, isNumber } from 'util';
 import { either, array, monad, foldable, applicative, functor, eitherT, traversable, pipeable } from 'fp-ts';
 import { pipe } from 'fp-ts/lib/pipeable';
 
@@ -63,7 +62,7 @@ function testParam(type: string, name: string, param: Paramable): either.Either<
             either.right(p) : either.left("param '" + name +"' does not exist for type '" + type + "'")
         ),
         either.chain(p => {
-            if(isString(p)) {
+            if(typeof p === 'string') {
                 let poptype = parsedops[type].pars[name].type
                 if (poptype === "string"){
                     return either.right({type: "string", value0: [p.toString()]})
@@ -75,7 +74,7 @@ function testParam(type: string, name: string, param: Paramable): either.Either<
                 } else {
                     return either.left("param type is not correct for " + type + "." + name)
                 }
-            } else if (isNumber(p) && (parsedops[type].pars[name].type == "number" || parsedops[type].pars[name].type == "float")){
+            } else if (typeof p === 'number' && (parsedops[type].pars[name].type == "number" || parsedops[type].pars[name].type == "float")){
                 return either.right({type: parsedops[type].pars[name].type, value0: [p.toString()]})
             } else if(isIParamAny(p)) {
                 return type != "baseCOMP" && (<IParamAny>p).type !== parsedops[type].pars[name].type && 

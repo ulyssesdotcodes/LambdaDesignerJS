@@ -1,6 +1,5 @@
 import { FBNode, FBTargetNode, INode, IParamAny, IParam, OP, ParamType, PulseAction, Paramable } from './Types'
 import deepEqual from 'deep-equal'
-import { isString, isNumber } from 'util';
 import { Guid } from 'guid-typescript'
 import { option, array } from 'fp-ts';
 
@@ -155,7 +154,7 @@ function addAction(nodedict: NodeDict) {
 
 function parseParamValue(nodedict: NodeDict, value: Array<string | INode>) : string | undefined {
     let val = array.array.reduce<string | INode, string | undefined>(value, "", (acc, p) => {
-        if (isString(p)) {
+        if (typeof p === 'string') {
             return acc + p;
         } else {
             let addednode = addNode(nodedict, p as INode)
