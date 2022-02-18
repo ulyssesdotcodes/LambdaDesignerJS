@@ -32,7 +32,6 @@
   "dependencies": {
     "@types/deep-equal": "^1.0.1",
     "deep-equal": "^1.0.1",
-    "express": "^4.17.1",
     "fp-ts": "^2.0.5",
     "guid-typescript": "^1.0.9",
     "io-ts": "^1.10.4"
