@@ -112,27 +112,27 @@ export const mp = (v: number) : IParam<"menu"> =>  {
   assert.ok(Number.isSafeInteger(v), "menu param only takes integers");
   return {  type: "menu", value0: [String(v)] }
 }
-export const xyp = (v0: IParam<"float">, v1: IParam<"float">) : IParam2<"xy"> =>  {
-  assert.ok(v0.type == "float" && v1.type == "float", "xy requires float params")
+export const xyp = (v0: IParam<"float" | "number">, v1: IParam<"float" | "number">) : IParam2<"xy"> =>  {
+  assert.ok((v0.type == "float" || v0.type === "number") && (v1.type == "float" || v1.type === "number"), "xy requires float params")
   return ({  type: "xy", value0: v0.value0, value1: v1.value0 })
 }
-export const xyzp = (v0: IParam<"float">, v1: IParam<"float">, v2: IParam<"float">) : IParam3<"xyz"> =>  {
-  assert.ok(v0.type == "float", "xyz requires float params")
-  assert.ok(v1.type == "float", "xyz requires float params")
-  assert.ok(v2.type == "float", "xyz requires float params")
+export const xyzp = (v0: IParam<"float" | "number">, v1: IParam<"float" | "number">, v2: IParam<"float" | "number">) : IParam3<"xyz"> =>  {
+  assert.ok(v0.type == "float" || v0.type == "number", "xyz requires float params")
+  assert.ok(v1.type == "float" || v1.type == "number", "xyz requires float params")
+  assert.ok(v2.type == "float" || v2.type == "number", "xyz requires float params")
   return ({  type: "xyz", value0: v0.value0, value1: v1.value0, value2: v2.value0 })
 }
-export const rgbp = (v0: IParam<"float">, v1: IParam<"float">, v2: IParam<"float">) : IParam3<"rgb"> =>  {
-  assert.ok(v0.type == "float", "rgb requires float params")
-  assert.ok(v1.type == "float", "rgb requires float params")
-  assert.ok(v2.type == "float", "rgb requires float params")
+export const rgbp = (v0: IParam<"float" | "number">, v1: IParam<"float" | "number">, v2: IParam<"float" | "number">) : IParam3<"rgb"> =>  {
+  assert.ok(v0.type == "float" || v0.type == "number", "rgb requires float params")
+  assert.ok(v1.type == "float" || v1.type == "number", "rgb requires float params")
+  assert.ok(v2.type == "float" || v2.type == "number", "rgb requires float params")
   return ({  type: "rgb", value0: v0.value0, value1: v1.value0, value2: v2.value0 })
 }
-export const xyzwp = (v0: IParam<"float">, v1: IParam<"float">, v2: IParam<"float">, v3: IParam<"float">) : IParam4<"xyzw"> =>  {
-  assert.ok(v0.type == "float", "xyzw requires float params")
-  assert.ok(v1.type == "float", "xyzw requires float params")
-  assert.ok(v2.type == "float", "xyzw requires float params")
-  assert.ok(v3.type == "float", "xyzw requires float params")
+export const xyzwp = (v0: IParam<"float" | "number">, v1: IParam<"float" | "number">, v2: IParam<"float" | "number">, v3: IParam<"float" | "number">) : IParam4<"xyzw"> =>  {
+  assert.ok(v0.type == "float" || v0.type == "number", "xyzw requires float params")
+  assert.ok(v1.type == "float" || v1.type == "number", "xyzw requires float params")
+  assert.ok(v2.type == "float" || v2.type == "number", "xyzw requires float params")
+  assert.ok(v3.type == "float" || v3.type == "number", "xyzw requires float params")
   return ({  type: "xyzw", value0: v0.value0, value1: v1.value0, value2: v2.value0, value3: v3.value0 })
 }
 export const whp = (v0: IParam<"number">, v1: IParam<"number">) : IParam2<"wh"> =>  {
@@ -165,7 +165,7 @@ export const sopp = opp("SOP")
 export const matp = opp("MAT")
 export const compp = opp("COMP")
 
-export const chan = (i: IParam<"number" | "string">, v: Node<"CHOP">): IParam<"float"> => {
+export const chan = (i: IParam<"number" | "string">, v: Node<"CHOP"> | DisconnectedNode<"CHOP">): IParam<"float"> => {
   let out = v.out()
   assert.equal("CHOP", out.family, "param and op family must match")
   assert.ok("number" === i.type || "string" === i.type, "chan needs integer or string param index")
@@ -187,11 +187,11 @@ export const divp = mathopp("/")
 export const modp = mathopp("%")
 export const powp = mathopp("**")
 
-export const funcp = (b: string) => (a: IParam<"float">) => {
+export const funcp = (b: string) => (a: IParam<"float" | "number">) => {
   return { type: "float", value0: ([b, "("] as Array<string | INode>).concat(a.value0, [")"])} as IParam<"float">;
 }
 
-export const funcp2 = (f: string) => (a: IParam<"float">, b: IParam<"float">) => {
+export const funcp2 = (f: string) => (a: IParam<"float" | "number">, b: IParam<"float" | "number">) => {
   return { type: "float", value0: ([f, "("] as Array<string | INode>).concat(a.value0, [", "], b.value0, [")"])} as IParam<"float">;
 }
 
