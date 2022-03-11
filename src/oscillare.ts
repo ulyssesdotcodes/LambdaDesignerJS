@@ -26,37 +26,37 @@ const compose = (...fns) =>
 let hex = (h) => hexToRgb(h)
 let rgb = (r, g, b) => ({ r: r, g: g, b: b })
 
-export const ain = (g?: number) => c.chope("audiodevicein")
+export function ain(g?: number){ return  c.chope("audiodevicein")
         .connect(c.chop("select", {channames: c.sp("chan1")}))
         .connect(c.chop("resample", {"timeslice": c.tp(false), "method": c.mp(0), "relative": c.mp(0), "end": c.fp(0.03)}))
         .connect(c.chop("math", {"gain": g === undefined ? c.fp(1) : g}))
-export const aine = (v) => ain(v == undefined ? c.fp(1) : v)
-export const atex = (v) => c.top("chopto", {"chop": c.chopp([ain(v)])})
-export const aspect = () => c.chope('audiodevicein').connect(c.chope('audiospectrum'))
-export const aspecttex = () => c.top("chopto", {"chop": c.chopp([aspect()])})
-export const analyze = (i) => c.chop('analyze', {"function": c.mp(i)})
-export const vol = (v) => ain(v).connect(analyze(6))
-export const vols = (v) => vol(v).connect(c.chop("speed"))
-export const volc = (v) => c.chan(c.ip(0), vol(v))
-export const volsc = (v) => c.chan(c.ip(0), vols(v))
-export const lowPass = () => c.chop("audiofilter", {"filter": c.mp(0)})
-export const lowv = (v) => ain(v).connect(lowPass()).connect(analyze(6))
-export const lowvs = (v) => lowv(v).connect(c.chop("speed"))
-export const lowvc = (v) => c.chan(c.ip(0), lowv(v))
-export const lowvsc = (v) => c.chan(c.ip(0), lowvs(v))
-export const highPass = () => c.chop("audiofilter", {"filter": c.mp(1)})
-export const highv = (v) => ain(v).connect(highPass()).connect(analyze(6))
-export const highvc = (v) => c.chan(c.ip(0), highv(v))
-export const bandPass = (b) => c.chop("audiofilter", {"filter": c.mp(2), "cutofflog": c.multp(b, c.fp(4.5))})
-export const bandv = (b, v) => ain(v).connect(bandPass(b)).connect(analyze(6))
-export const bandvc = (b, v) => c.chan(c.ip(0), bandv(b, v))
-export const mchan = (chan) => c.chan(c.sp(chan), c.chope("midiinmap"))
-export const mchop = (chan) => c.chope("midiinmap").connect(c.chop("select", {"channames": c.sp(chan)}))
-export const cxyzp = (val) => c.xyzp(val, val, val)
-export const lagdown = (val) => c.chop("lag", {lag2: val})
-export const lagup = (val) => c.chop("lag", {lag1: val})
-export const lagboth = (val) => c.chop("lag", {lag1: val, lag2: val})
-export const frag = (fragname, uniforms) => c.top("glslmulti", Object.assign({
+} export function aine(v){ return  ain(v == undefined ? c.fp(1) : v)
+} export function atex(v){ return  c.top("chopto", {"chop": c.chopp([ain(v)])})
+} export function aspect(){ return  c.chope('audiodevicein').connect(c.chope('audiospectrum'))
+} export function aspecttex(){ return  c.top("chopto", {"chop": c.chopp([aspect()])})
+} export function analyze(i){ return  c.chop('analyze', {"function": c.mp(i)})
+} export function vol(v){ return  ain(v).connect(analyze(6))
+} export function vols(v){ return  vol(v).connect(c.chop("speed"))
+} export function volc(v){ return  c.chan(c.ip(0), vol(v))
+} export function volsc(v){ return  c.chan(c.ip(0), vols(v))
+} export function lowPass(){ return  c.chop("audiofilter", {"filter": c.mp(0)})
+} export function lowv(v){ return  ain(v).connect(lowPass()).connect(analyze(6))
+} export function lowvs(v){ return  lowv(v).connect(c.chop("speed"))
+} export function lowvc(v){ return  c.chan(c.ip(0), lowv(v))
+} export function lowvsc(v){ return  c.chan(c.ip(0), lowvs(v))
+} export function highPass(){ return  c.chop("audiofilter", {"filter": c.mp(1)})
+} export function highv(v){ return  ain(v).connect(highPass()).connect(analyze(6))
+} export function highvc(v){ return  c.chan(c.ip(0), highv(v))
+} export function bandPass(b){ return  c.chop("audiofilter", {"filter": c.mp(2), "cutofflog": c.multp(b, c.fp(4.5))})
+} export function bandv(b, v){ return  ain(v).connect(bandPass(b)).connect(analyze(6))
+} export function bandvc(b, v){ return  c.chan(c.ip(0), bandv(b, v))
+} export function mchan(chan){ return  c.chan(c.sp(chan), c.chope("midiinmap"))
+} export function mchop(chan){ return  c.chope("midiinmap").connect(c.chop("select", {"channames": c.sp(chan)}))
+} export function cxyzp(val){ return  c.xyzp(val, val, val)
+} export function lagdown(val){ return  c.chop("lag", {lag2: val})
+} export function lagup(val){ return  c.chop("lag", {lag1: val})
+} export function lagboth(val){ return  c.chop("lag", {lag1: val, lag2: val})
+} export function frag(fragname, uniforms){ return  c.top("glslmulti", Object.assign({
             "resolutionw": c.ip(1920), 
             "resolutionh": c.ip(1080),
             "pixeldat": c.datp([c.dat("text", {"file" : c.sp("scripts/Visuals/" + fragname)})]),
@@ -64,7 +64,7 @@ export const frag = (fragname, uniforms) => c.top("glslmulti", Object.assign({
             "format": c.mp(4) 
         }, zip([Array(8).fill("uniname"), Array.from(Array(8).keys()), Object.keys(uniforms)]).reduce((acc, v) => { acc[v[0]+v[1]] = c.sp(v[2]); return acc; }, {})
         , zip([Array(8).fill("value"), Array.from(Array(8).keys()), Object.values(uniforms)]).reduce((acc, v) => { acc[v[0]+v[1]] = v[2]; return acc; }, {})))
-export const sidebyside = (inputs) => 
+} export function sidebyside(inputs){ return  
         c.top("glslmulti", {
             pixeldat: c.datp([
                 c.dat("text", {
@@ -74,8 +74,8 @@ export const sidebyside = (inputs) =>
             resolutionh: c.ip(1080),
             outputresolution: c.mp(9)
         }).run(inputs)
-export const verticalstack = (inputs) => 
-        c.top("glslmulti", {
+} export function verticalstack(inputs){ 
+    return  c.top("glslmulti", {
             pixeldat: c.datp([
                 c.dat("text", {
                     "file" : c.sp("scripts/verticalstack.frag")
@@ -84,18 +84,18 @@ export const verticalstack = (inputs) =>
             resolutionh: { type: "number", value0: [ "sum(map(lambda n: n.height, me.inputs))" ] },
             outputresolution: c.mp(9)
         }).run(inputs)
-export const adata = (v) => atex(v).connect(frag('audio_data.frag', {'i_volume': c.x4p(c.fp(1))}))
-export const noiset = (t) => c.top("noise", {"t": c.xyzp(c.fp(0), c.fp(0), t)})
-export const noisecc = (t, amp, channames) => c.chan(c.ip(0), noisec(t, amp, channames))
-export const speed = (val) => c.chop("speed")
-export const timeslice = (off) => c.chop("trim", {
+} export function adata(v){ return  atex(v).connect(frag('audio_data.frag', {'i_volume': c.x4p(c.fp(1))}))
+} export function noiset(t){ return  c.top("noise", {"t": c.xyzp(c.fp(0), c.fp(0), t)})
+} export function noisecc(t, amp, channames){ return  c.chan(c.ip(0), noisec(t, amp, channames))
+} export function speed(val){ return  c.chop("speed")
+} export function timeslice(off){ return  c.chop("trim", {
         relative: c.mp(0), 
         startunit: c.mp(2),
         endunit: c.mp(2),
         start: off,
         end: off
-    })
-export const noisec = (t, amp, channames, seed = c.fp(0)) => c.chop("noise", {
+    })}
+export function noisec(t, amp, channames, seed = c.fp(0)){ return c.chop("noise", {
         type: c.mp(3), 
         amp: amp,
         left: c.mp(2),
@@ -103,19 +103,20 @@ export const noisec = (t, amp, channames, seed = c.fp(0)) => c.chop("noise", {
         channelname: c.sp(channames),
         seed: seed,
         })
-export const sparsenoisec = (t, g) => c.chan0(c.chop("noise", {
+} export function sparsenoisec(t, g){ return  c.chan0(c.chop("noise", {
             seed: c.fp(new Date().getMilliseconds()),
             t: c.xyzp(t, c.fp(0), c.fp(0)) ,
         })
         .c(c.cc((inputs) => c.chop("math", { gain: g }).run(inputs)))
         .c(c.chop("function", { func: c.mp(1),}))
         .c(c.chop("speed")))
-export const noisects = (t, amp, channames, seed = c.fp(0)) => 
-        noisec(t, amp, channames, seed)
+    }
+export function noisects(t, amp, channames, seed = c.fp(0)) { 
+        return noisec(t, amp, channames, seed)
             .c(timeslice(t))
-export const lines = (spacing, width) => frag("lines.frag", {"i_spacing": c.x4p(spacing), "i_width": c.x4p(width)})
-export const shapes = (sides, size, width) => frag("shapes.frag", {"i_size": c.x4p(size), "i_width": c.x4p(width), "i_sides": c.x4p(sides)})
-export const stringtheory = (time, angle, angle_delta, xoffset) =>
+} export function lines(spacing, width){ return  frag("lines.frag", {"i_spacing": c.x4p(spacing), "i_width": c.x4p(width)})
+} export function shapes(sides, size, width){ return  frag("shapes.frag", {"i_size": c.x4p(size), "i_width": c.x4p(width), "i_sides": c.x4p(sides)})
+} export function stringtheory(time, angle, angle_delta, xoffset){ return 
         frag("string_theory.frag", 
             { 
                 "i_time": c.x4p(time), 
@@ -123,8 +124,8 @@ export const stringtheory = (time, angle, angle_delta, xoffset) =>
                 "i_angle_delta": c.x4p(angle_delta === undefined ? c.fp(0.4) : angle_delta), 
                 "i_xoff": c.x4p(xoffset === undefined ? c.fp(0) : xoffset)
             })
-export const crosshatch = () => frag("crosshatch.frag", {})
-export const commandcode = (text) => c.top("text", {
+} export function crosshatch(){ return  frag("crosshatch.frag", {})
+} export function commandcode(text){ return  c.top("text", {
         "resolutionw": c.ip(1920), 
         "resolutionh": c.ip(1080), 
         "fontsizey": c.fp(16), 
@@ -134,44 +135,44 @@ export const commandcode = (text) => c.top("text", {
         "dispmethod": c.mp(3),
         "fontautosize": c.mp(1)
     })
-export const flowermod = (s) => frag("flower_mod.frag", {"uSeconds": c.x4p(s)})
-export const lumidots = () => frag("lumidots.frag", {})
-export const mosaic = (t, s) => frag("mosaic.frag", {"uTime" : c.x4p(t), "uScale" : c.x4p(s)})
-export const noisedisplace = (t, d) => frag("noise_displace.frag", {"uTime": c.x4p(t), "uDisplacement": c.x4p(d)})
-export const transform = (extra) => c.top("transform", extra)
-export const rotate = (r) => transform({"rotate": r})
-export const translate = (x, y) => transform({"t": c.xyp(x, y), "extend": c.mp(3)})
-export const translatee = (x, y, e) => transform({"t": c.xyp(x, y), "extend": c.mp(e)})
-export const translatex = (x) => translate(x, c.fp(0))
-export const translatexclamp = (t, clamp) => c.top("transform", {
+} export function flowermod(s){ return  frag("flower_mod.frag", {"uSeconds": c.x4p(s)})
+} export function lumidots(){ return  frag("lumidots.frag", {})
+} export function mosaic(t, s){ return  frag("mosaic.frag", {"uTime" : c.x4p(t), "uScale" : c.x4p(s)})
+} export function noisedisplace(t, d){ return  frag("noise_displace.frag", {"uTime": c.x4p(t), "uDisplacement": c.x4p(d)})
+} export function transform(extra){ return  c.top("transform", extra)
+} export function rotate(r){ return  transform({"rotate": r})
+} export function translate(x, y){ return  transform({"t": c.xyp(x, y), "extend": c.mp(3)})
+} export function translatee(x, y, e){ return  transform({"t": c.xyp(x, y), "extend": c.mp(e)})
+} export function translatex(x){ return  translate(x, c.fp(0))
+} export function translatexclamp(t, clamp){ return  c.top("transform", {
         t: c.xyp(c.multp(floor(c.divp(c.modp(t, c.fp(1)), clamp)), clamp), c.fp(0)),
         extend: c.mp(2),
     })
-export const translatey = (y) => translate(c.fp(0), y)
-export const val = (v) => c.top("hsvadjust", {"valuemult": v})
-export const transformscale = (f, x, y, e) => transform(Object.assign({
+} export function translatey(y){ return  translate(c.fp(0), y)
+} export function val(v){ return  c.top("hsvadjust", {"valuemult": v})
+} export function transformscale(f, x, y, e){ return  transform(Object.assign({
         "extend": c.mp(e),
         "s": c.xyp(c.powp(x, c.fp(-1)), c.powp(y, c.fp(-1)))
     }, f))
-export const scale = (xy) => transformscale({}, xy, xy, 1)
-export const rgbsplit = (s) => frag("rgbsplit.frag", {"uFrames": c.x4p(s)})
-export const repeatT = (x, y) => transformscale({}, x, y, 3)
-export const repeatTxy = (xy)=> transformscale({}, xy, xy, 3)
-export const strobe = (s) => frag("strobe.frag", {"uSpeed": c.x4p(s), "uTime": c.x4p(c.seconds)})
-export const mirrorx = () => c.cc((inputs) => addops([inputs[0].c(c.top("flip", {flipx: c.tp(true)}))].concat(inputs)))
-export const mirrory = () => c.cc((inputs) => addops([inputs[0].c(c.top("flip", {flipy: c.tp(true)}))].concat(inputs)))
-export const const1 = (v) => c.chop("constant", {"name0": c.sp("const"), "value0": v})
-export const constc = (namevals) => c.chop("constant", Object.entries(namevals).reduce(function(map, val, idx) {
+} export function scale(xy){ return  transformscale({}, xy, xy, 1)
+} export function rgbsplit(s){ return  frag("rgbsplit.frag", {"uFrames": c.x4p(s)})
+} export function repeatT(x, y){ return  transformscale({}, x, y, 3) }
+export function repeatTxy (xy){ return transformscale({}, xy, xy, 3)}
+ export function strobe(s){ return  frag("strobe.frag", {"uSpeed": c.x4p(s), "uTime": c.x4p(c.seconds)})
+} export function mirrorx(){ return  c.cc((inputs) => addops([inputs[0].c(c.top("flip", {flipx: c.tp(true)}))].concat(inputs)))
+} export function mirrory(){ return  c.cc((inputs) => addops([inputs[0].c(c.top("flip", {flipy: c.tp(true)}))].concat(inputs)))
+} export function const1(v){ return  c.chop("constant", {"name0": c.sp("const"), "value0": v})
+} export function constc(namevals){ return  c.chop("constant", Object.entries(namevals).reduce(function(map, val, idx) {
         map["name" + idx] = c.sp(val[0])
         map["value" + idx] = val[1]
         return map
     }, {}))
 
-export const rgbc = (r, g, b) => constc({ r: r, g: g, b: b })
-export const palettergbc = (color) => rgbc(c.fp(color.r / 255), c.fp(color.g / 255), c.fp(color.b / 255))
-export const rgbt = (color) => c.top("chopto", {"chop": c.chopp([palettergbc(color).runT()]), "dataformat": c.mp(2) })
-export const palette = (colors) => 
-        c.top("chopto", {
+} export function rgbc(r, g, b){ return  constc({ r: r, g: g, b: b })
+} export function palettergbc(color){ return  rgbc(c.fp(color.r / 255), c.fp(color.g / 255), c.fp(color.b / 255))
+} export function rgbt(color){ return  c.top("chopto", {"chop": c.chopp([palettergbc(color).runT()]), "dataformat": c.mp(2) })
+} export function palette(colors){ 
+    return  c.top("chopto", {
             "chop":
                 c.chopp([
                     c.chope("merge")
@@ -181,18 +182,18 @@ export const palette = (colors) =>
             "dataformat": c.mp(2)
         })
 
-export const palettemap = (p, o) => 
-        c.insertconn(
+} export function palettemap(p, o){ 
+    return  c.insertconn(
             frag("palette_map.frag", {"uOffset": c.x4p(o), "uSamples": c.x4p(c.fp(16))}), 
             [], 
             [palette(p).runT()])
-export const palettecycle = (palette, s) => {
+} export function palettecycle(palette, s){ 
         let palettechop = c.chop("cross", {"cross": c.modp(s, c.fp(palette.length))}).run(palette.map((col) => palettergbc(col).runT()))
         let palettet = c.top("chopto", {"chop": c.chopp([palettechop]), "dataformat": c.mp(2)})
         return c.cc((inputs: t.Node<"TOP">[]) => 
             c.top("composite", {"operand": c.mp(27)}).run([palettet.runT()].concat(inputs))
         )
-    }
+}
 
 export const tealcontrast =[rgb(188, 242, 246), rgb(50, 107, 113), rgb(211, 90, 30), rgb(209, 122, 43), rgb(188, 242, 246)]
 export const purplish =[rgb(150, 110, 100), rgb(223, 143, 67), rgb(76, 73, 100, ), rgb(146, 118, 133), rgb(165, 148, 180)]
@@ -210,36 +211,37 @@ export const flower = ["000E00", "003D00", "E4A900", "FEDEEF", "C99CB8"].map(hex
 export const bluepink = ["F2C6F2", "F8F0F0", "A6D1FF", "3988E1", "4C8600"].map(hexToRgb)
 export const lime = ["FF4274", "DCD549", "ABDFAB", "437432", "033B45"].map(hexToRgb)
 
-export const sat = (s) => c.top("hsvadjust", {"saturationmult": s})
-export const edgesc = (original) => c.cc((inputs: t.Node<"TOP">[]) => 
+export function sat(s){ return  c.top("hsvadjust", {"saturationmult": s})
+} export function edgesc(original){ return  c.cc((inputs: t.Node<"TOP">[]) => 
         c.top("composite", {"operand": c.mp(0)})
             .run([
                 inputs[0].connect(c.tope("edge")), 
                 inputs[0].connect(c.top("level", {"opacity": original}))
             ]))
-export const addops = (nodes) => c.top("composite", { "operand":c.mp(0)}).run(nodes.map((n) => n.runT()))
-export const multops = (nodes) => c.top("composite", { "operand":c.mp(27)}).run(nodes.map((n) => n.runT()))
-export const overops = (nodes) => c.top("composite", { "operand":c.mp(31)}).run(nodes.map((n) => n.runT()))
-export const fadeops = (idx, ops) => c.top("switch", { "blend": c.tp(true), "index": bounce(idx, 0.4)}).run(ops.map(o => o.runT()))
-export const bounce = (fp, i) => c.absp(c.subp(c.modp(fp, c.fp(i * 2)), c.fp(1)))
-export const triggercount = (l, f) => f.connect(c.chop("count", {
+} export function addops(nodes){ return  c.top("composite", { "operand":c.mp(0)}).run(nodes.map((n) => n.runT()))
+} export function multops(nodes){ return  c.top("composite", { "operand":c.mp(27)}).run(nodes.map((n) => n.runT()))
+} export function overops(nodes){ return  c.top("composite", { "operand":c.mp(31)}).run(nodes.map((n) => n.runT()))
+} export function fadeops(idx, ops){ return  c.top("switch", { "blend": c.tp(true), "index": bounce(idx, 0.4)}).run(ops.map(o => o.runT()))
+} export function bounce(fp, i){ return  c.absp(c.subp(c.modp(fp, c.fp(i * 2)), c.fp(1)))
+} export function triggercount(l, f){ return  f.connect(c.chop("count", {
         "threshold": c.tp(true),
         "threshup": c.fp(0.5),
         "limitmax": c.fp(l),
         "output": c.mp(1)
     }))
 
-export const littleplanet = () => frag("little_planet.frag", {})
+} export function littleplanet(){ return  frag("little_planet.frag", {})
 
-export const triggerops = (f, inputs) => c.top("switch", {
+} export function triggerops(f, inputs){ return  c.top("switch", {
         "index": c.chan(c.ip(0), triggercount(inputs.length - 1, f))
     }).run(inputs.map((i) => i.runT()))
 
-export const triggerchops = (f, inputs) => c.chop("switch", {
+} export function triggerchops(f, inputs){ return  c.chop("switch", {
         "index": c.chan(c.ip(0), triggercount(inputs.length - 1, f))
     }).run(inputs.map((i) => i.runT()))
+}
 
-export const fade = (opacity, midops = c.cc((inputs: t.Node<"TOP">[]) => inputs[0])) => c.cc((inputs: t.Node<"TOP">[]) => 
+export function fade (opacity, midops = c.cc((inputs: t.Node<"TOP">[]) => inputs[0])) { return  c.cc((inputs: t.Node<"TOP">[]) => 
         c.feedbackChain(c.cc((fbinputs) => 
             c.top("composite", {"operand": c.mp(0)})
                 .run(inputs.concat([
@@ -247,19 +249,20 @@ export const fade = (opacity, midops = c.cc((inputs: t.Node<"TOP">[]) => inputs[
                     .c(midops)
                     .run(fbinputs)
                 ])))).run(inputs))
-export const secs = (m) => c.multp(c.seconds, m)
-export const floor = (f) => c.funcp("math.floor")(f)
+} export function secs(m){ return  c.multp(c.seconds, m)
+} export function floor(f){ return  c.funcp("math.floor")(f)
 
-export const geo = (params) => c.comp("geometry", Object.assign({externaltox: c.sp("toxes/Visuals/geo.tox")}, params))
-export const tox = (tox, params) => c.comp("base", Object.assign({externaltox: c.sp(tox)}, params))
-export const render = (g, cam?: (t.Node<"COMP">| t.DisconnectedNode<"COMP">)[], light?: t.Node<"COMP">[] | t.DisconnectedNode<"COMP">[]) => c.top("render", {
+} export function geo(params){ return  c.comp("geometry", Object.assign({externaltox: c.sp("toxes/Visuals/geo.tox")}, params))
+} export function tox(tox, params){ return  c.comp("base", Object.assign({externaltox: c.sp(tox)}, params)) }
+export function render(g, cam?: (t.Node<"COMP">| t.DisconnectedNode<"COMP">)[], light?: t.Node<"COMP">[] | t.DisconnectedNode<"COMP">[]) {
+    return c.top("render", {
         lights: light === undefined ? c.compp([c.compe("light")]) : c.compp(light),
         geometry: c.compp(g),
         camera: cam === undefined ? c.compp([c.compe("camera")]) : c.compp(cam),
         resolutionw: c.ip(1920),
         resolutionh: c.ip(1080)
     })
-export const renderEasy = (sop, instances, geoparams) => c.top("render", {
+} export function renderEasy(sop, instances, geoparams){ return  c.top("render", {
         "lights": c.compp([c.comp("light", { lighttype: c.mp(2) })]),
         "geometry": c.compp([
             sop.connect(c.comp("geometry", Object.assign({
@@ -287,15 +290,15 @@ export const renderEasy = (sop, instances, geoparams) => c.top("render", {
         resolutionw: c.ip(1920),
         resolutionh: c.ip(1080)
     })
-export const sinC = (i, phase, off) => 
-        c.chop("wave", {
+} export function sinC(i, phase, off){ 
+    return  c.chop("wave", {
             "channelname": c.sp("rz"), 
             "end": i, 
             "endunit": c.mp(1), 
             phase: phase, 
             offset: off
     })
-export const scaleC = (i, n) => c.chop("wave", {
+} export function scaleC(i, n){ return  c.chop("wave", {
         channelname: c.sp("sx"), 
         "end" : i, 
         "endunit": c.mp(1), 
@@ -303,13 +306,13 @@ export const scaleC = (i, n) => c.chop("wave", {
         "period": i, 
         "amp": n
     })
-export const sidesTorus = (sides, scale) => c.sop("torus", {
+} export function sidesTorus(sides, scale){ return  c.sop("torus", {
         orientation: c.fp(2),
         rows: c.fp(10),
         columns: sides,
         radius: c.xyp(scale, c.multp(scale, c.fp(0.5)))
     })
-export const line = (ty, rz, sx, sy, sop, width, instances, mat) => {
+} export function line(ty, rz, sx, sy, sop, width, instances, mat){ 
         let tx = c.chop("wave", {
             channelname: c.sp("tx"), 
             end: instances,
@@ -351,7 +354,7 @@ export const line = (ty, rz, sx, sy, sop, width, instances, mat) => {
         })
         return render(sgeo)
     }
-export const lineLines = (width, scale, inst, sop) => {
+export function lineLines(width, scale, inst, sop){ 
         let instances = c.addp(inst, c.fp(2))
         return line(
             ain(scale).connect(
@@ -367,13 +370,13 @@ export const lineLines = (width, scale, inst, sop) => {
             scaleC(instances, c.fp(10)),
             sop, width, instances, c.mate("wireframe").runT())
     }
-export const centerCam = (t, r) => c.comp("camera", {
+export function centerCam(t, r){ return  c.comp("camera", {
         t: c.xyzp(c.fp(0), c.fp(0), t),
         p: c.xyzp(c.fp(0), c.fp(0), c.multp(c.fp(-1), t)),
         r: r === undefined ? c.xyzp(c.fp(0), c.fp(0), c.fp(0)) : r
     })
-export const decaywave = (v) => 
-        c.chop("wave", {
+} export function decaywave(v){ 
+    return  c.chop("wave", {
             wavetype: c.mp(1),
             end: c.fp(32), 
             endunit: c.mp(1),
@@ -388,19 +391,20 @@ export const decaywave = (v) =>
         })
         .c(c.chop("trim", { start: c.fp(2) }))
         .c(c.chop("math", { gain: c.fp(2) }))
-export const movecircle = (off, off2) =>
-        constc({
+} export function movecircle(off, off2){ 
+    return constc({
             tx: c.multp(c.sinp(off), c.cosp(off2)),
             ty: c.multp(c.sinp(off), c.sinp(off2)),
             tz: c.cosp(off)
         })
-export const distfun = (outerc, fun) =>
-        c.chop("math", { chopop: c.mp(2) })
+} export function distfun(outerc, fun){ 
+        return c.chop("math", { chopop: c.mp(2) })
             .run([outerc.runT(), fun.runT()])
             .c(c.chop("function", {func: c.mp(19), expval: c.fp(2)}))
             .c(c.chop("function", {func:c.mp(1)}))
             .c(c.chop("math", {chanop: c.mp(1)}))
-export const geoGeo = (instancesop, parentchop, scale, cam: t.Node<"COMP"> | t.DisconnectedNode<"COMP">, lightmap)=> {
+}
+export function geoGeo(instancesop, parentchop, scale, cam: t.Node<"COMP"> | t.DisconnectedNode<"COMP">, lightmap){
         let chop = 
             c.chop("merge").run([
                 parentchop.runT(),
@@ -440,7 +444,7 @@ export const geoGeo = (instancesop, parentchop, scale, cam: t.Node<"COMP"> | t.D
             })]
         )
     }
-export const torusGeo = (sop, lightmap) => {
+export function torusGeo(sop, lightmap){ 
         let s = c.chop("wave", {
             end: c.fp(50), 
             endunit: c.mp(1),
@@ -454,19 +458,19 @@ export const torusGeo = (sop, lightmap) => {
 
         return geoGeo(sop, torus, s, cam, lightmap)
     }
-export const flocking = (cohesion, sep, sp) => 
+export function flocking(cohesion, sep, sp){ return  
         tox("toxes/Visuals/flockingGpu.tox",
             { Cohesion: cohesion
             , Separation: sep
             , Alignment: cohesion
             , Speed: sp
             })
-export const sinct = (t, i, w) => c.cc((inputs: t.Node<"TOP">[]) => 
+} export function sinct(t, i, w){ return  c.cc((inputs: t.Node<"TOP">[]) => 
         multops([
             c.top("chopto", {"chop": 
                 c.chopp([sinC(i, t, w)])}).runT()
         ].concat(inputs)))
-export const tapbeat = (input, g, reset) => {
+} export function tapbeat(input, g, reset){ 
         let beat = input.c(c.chop("logic", {preop: c.mp(5)})).runT()
         let beathold = c.chop("hold").run([
                 c.chop("speed").run([const1(c.fp(1)).runT(), beat])
@@ -496,21 +500,20 @@ export const tapbeat = (input, g, reset) => {
                     preop: c.mp(5), 
                     convert: c.mp(2)}))
         return {beatpulse: finalbeat, bps: bps}
-        }
-export const tapbeatm9 = () => tapbeat(mchop("b9"), (c.powp(c.fp(2), (floor(c.multp(c.subp(mchan("s1a"), c.fp(0.5)), c.fp(4)))))), mchop("b10"))
+} export function tapbeatm9(){ return  tapbeat(mchop("b9"), (c.powp(c.fp(2), (floor(c.multp(c.subp(mchan("s1a"), c.fp(0.5)), c.fp(4)))))), mchop("b10"))
 
-export const beatramp = (beat) => c.chop("speed", {resetcondition: c.mp(2)}).run([beat.bps, beat.beatpulse])
-export const beatxcount = (x, reset, beat) => c.chop("count", { output: c.mp(1), limitmax: c.fp(x - 1) }).run([beat.beatpulse, reset])
-export const beatxpulse = (x, reset, beat) => beatxcount(x, reset, beat).c(c.chop("logic", { preop: c.mp(6) }))
-export const beatxramp = (x, reset, beat) => 
+} export function beatramp(beat){ return  c.chop("speed", {resetcondition: c.mp(2)}).run([beat.bps, beat.beatpulse])
+} export function beatxcount(x, reset, beat){ return  c.chop("count", { output: c.mp(1), limitmax: c.fp(x - 1) }).run([beat.beatpulse, reset])
+} export function beatxpulse(x, reset, beat){ return  beatxcount(x, reset, beat).c(c.chop("logic", { preop: c.mp(6) }))
+} export function beatxramp(x, reset, beat){ return  
         c.chop("speed").run([
                 beat.bps.c(c.chop("math", { gain: c.fp(1/x) })).runT(), 
                 beatxpulse(x, reset, beat).runT()
         ])
-export const beatseconds = (b, reset) => c.multp(c.seconds, c.chan0(b.bps))
-export const tapbeatm9sec = () => beatseconds(tapbeatm9(), mchop("b10"))
-export const beatsecondschop = (b) => c.chop("speed").run([b.bps.runT()])
-export const dmxtochop = (dmx) => {
+} export function beatseconds(b, reset){ return  c.multp(c.seconds, c.chan0(b.bps))
+} export function tapbeatm9sec(){ return  beatseconds(tapbeatm9(), mchop("b10"))
+} export function beatsecondschop(b){ return  c.chop("speed").run([b.bps.runT()])
+} export function dmxtochop(dmx){ 
         switch(dmx.type) {
             case 'GenericRGB':
                 return dmx.color
@@ -524,9 +527,8 @@ export const dmxtochop = (dmx) => {
             case 'FillVal':
                 return constc(Object.assign({}, new Array(dmx.num).fill(dmx.value)))
         }
-    }
-export const multchops = (chops) => c.chop("math", {chopop: c.mp(3)}).run(chops)
-export const pulse = (g, usb) => c.chop("datto", {
+} export function multchops(chops){ return  c.chop("math", {chopop: c.mp(3)}).run(chops)
+} export function pulse(g, usb){ return  c.chop("datto", {
         firstrow: c.mp(1),
         firstcolumn: c.mp(2),
         dat: c.datp([c.dat("serial", { 
@@ -535,15 +537,15 @@ export const pulse = (g, usb) => c.chop("datto", {
         }).runT()])})
         .c(c.chop("math", {gain: g === undefined ? c.fp(1) : g}))
 
-export const sensel = () => c.chop("cplusplus")
-export const senselchop = () => sensel().c(c.chop("select", {channames: c.sp("chan")})).c(c.chop("shuffle", { method: c.mp(8), nval: c.ip(185) }))
-export const senseltop = (f = (n) => n) =>
-        c.top("chopto", { chop: c.chopp([f(senselchop())])})
+} export function sensel(){ return  c.chop("cplusplus")
+} export function senselchop(){ return  sensel().c(c.chop("select", {channames: c.sp("chan")})).c(c.chop("shuffle", { method: c.mp(8), nval: c.ip(185) }))
+} export function senseltop(f = (n) => n){
+        return c.top("chopto", { chop: c.chopp([f(senselchop())])})
         .c(c.top("flip", {flipy: c.tp(true)}))
         .c(c.top("resolution", {resolutionw: c.ip(1920), resolutionh: c.ip(1080), outputresolution: c.mp(9)}))
         .c(c.top("reorder", {format: c.mp(26), outputalphachan: c.mp(0)}))
-export const senseltouches = () => sensel().c(c.chop("select", {channames: c.sp("chan1")})).c(c.chop("delete", { delsamples: c.tp(true)}))
-export const gesture = (mchan) => c.chop("gesture").run([
+} export function senseltouches(){ return  sensel().c(c.chop("select", {channames: c.sp("chan1")})).c(c.chop("delete", { delsamples: c.tp(true)}))
+} export function gesture(mchan){ return  c.chop("gesture").run([
             sensel()
                 .c(c.chop("select", { channames: c.sp("chan") }))
                 .c(c.chop("shuffle", { method: c.mp(1)})), 
@@ -553,21 +555,21 @@ export const gesture = (mchan) => c.chop("gesture").run([
             nval: c.ip(185), 
             firstsample: c.tp(true)
         }))
-export const gesturetop = (chop) =>
+} export function gesturetop(chop){ return 
         c.top("chopto", { chop: c.chopp([chop])})
             .c(c.top("flip", {flipy: c.tp(true)}))
             .c(c.top("resolution", {resolutionw: c.ip(1920), resolutionh: c.ip(1080), outputresolution: c.mp(9)}))
             .c(c.top("reorder", {format: c.mp(26), outputalphachan: c.mp(0)}))
-export const added = (changes) => c.dat("table", {}, [], null, changes)
+} export function added(changes){ return  c.dat("table", {}, [], null, changes)
         .c(c.dat("select", { extractrows: c.mp(5), rownames: c.sp("added"), extractcols: c.mp(2), colindexstart: c.ip(1)}))
-export const addedchange = (changes) => 
-        c.chop("math", { gain: c.fp(0.8), chopop: c.mp(2), postop: c.mp(0) }).run([
+} export function addedchange(changes){ 
+    return  c.chop("math", { gain: c.fp(0.8), chopop: c.mp(2), postop: c.mp(0) }).run([
             c.chop("info", { op: c.datp(added(changes)), iscope: c.sp("cook_abs_frame") }),
             c.chop("timeline", { absframe: c.tp(true), frame: c.tp(false) })
         ])
         .c(c.chop("logic", { preop: c.mp(1), convert: c.mp(0) }))
-export const addedtop = (changes) => 
-        fullscreentext(
+} export function addedtop(changes){ 
+    return  fullscreentext(
             added(changes).c(c.dat("convert", { how: c.mp(0) })), 
             c.chan(c.sp("num_rows"), c.chop("info", { op: c.datp(added(changes)) })))
             .c(c.top("level", {  opacity:  c.chan0(addedchange(changes).c(c.chop("trigger", { 
@@ -577,15 +579,15 @@ export const addedtop = (changes) =>
                 minsustain: c.fp(5),
                 release: c.fp(1)
              })))}))
-export const removed = (changes) => c.dat("table", {}, [], null, changes)
+} export function removed(changes){ return  c.dat("table", {}, [], null, changes)
         .c(c.dat("select", { extractrows: c.mp(5), rownames: c.sp("removed"), extractcols: c.mp(2), colindexstart: c.ip(1)}))
-export const removedchange = (changes) => 
+} export function removedchange(changes){ return  
         c.chop("math", { gain: c.fp(0.8), chopop: c.mp(2), postop: c.mp(0) }).run([
             c.chop("info", { op: c.datp(removed(changes)), iscope: c.sp("cook_abs_frame") }),
             c.chop("timeline", { absframe: c.tp(true), frame: c.tp(false) })
         ])
         .c(c.chop("logic", { preop: c.mp(1), convert: c.mp(0) }))
-export const removedtop = (changes) => 
+} export function removedtop(changes){ return  
         fullscreentext(
             removed(changes).c(c.dat("convert", { how: c.mp(0) })), 
             c.chan(c.sp("num_rows"), c.chop("info", { op: c.datp(removed(changes)) }))
@@ -597,12 +599,12 @@ export const removedtop = (changes) =>
                 minsustain: c.fp(2),
                 release: c.fp(1)
              })))}))
-export const changestop = (changes) => verticalstack([
+} export function changestop(changes){ return  verticalstack([
         multops([c.top("constant", { color: c.rgbp(c.fp(0), c.fp(1), c.fp(0)) }), addedtop(changes)]),
         multops([c.top("constant", { color: c.rgbp(c.fp(1), c.fp(0), c.fp(0)) }), removedtop(changes)]),
     ]).c(c.top("fit", {  resolutionw: c.ip(1920) ,  resolutionh: c.ip(1080), outputresolution: c.mp(9), outputaspect: c.mp(1),  }))
-export const textdat = (text) => c.dat("text", {}, [], null, text)
-export const fullscreentext = (textdat, rowcount) => c.top("text", {
+} export function textdat(text){ return  c.dat("text", {}, [], null, text)
+} export function fullscreentext(textdat, rowcount){ return  c.top("text", {
         dat: c.datp(textdat),
         "resolutionw": c.ip(1920), 
         "resolutionh": c.multp(c.ip(36), 
@@ -618,4 +620,4 @@ export const fullscreentext = (textdat, rowcount) => c.top("text", {
         linespacing: c.fp(12) ,
         bgalpha: c.fp(0.4)
     })
-export const runop = (op, opp) => c.cc((inputs) => op.run(inputs.concat([opp])))
+} export function runop(op, opp){ return  c.cc((inputs) => op.run(inputs.concat([opp]))) }
