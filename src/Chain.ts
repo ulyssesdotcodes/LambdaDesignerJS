@@ -1,8 +1,6 @@
 import { DisconnectedNode, Node, NodeConnectFunc, FBNode, FBTargetNode, INode, OP, IParamAny, IParam, IParam2, IParam3, IParam4, ParamType, PulseAction, Paramable } from './Types'
-import * as fpt from 'fp-ts/lib/Tree'
-// import * as assert from 'assert'
 import { Guid } from 'guid-typescript'
-import { Option, none, fromNullable } from 'fp-ts/lib/Option';
+import { none, fromNullable } from 'fp-ts/lib/Option';
 
 const assert = {
   ok: (res, str) => {if(!res){throw new Error(str)}},

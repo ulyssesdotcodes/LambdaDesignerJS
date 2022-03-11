@@ -1,6 +1,6 @@
 {
   "name": "lambda-designer-js",
-  "version": "1.0.22",
+  "version": "1.0.21",
   "description": "LambdaDesigner for node. Create TouchDesigner networks with code.",
   "files": [
     "build"
@@ -16,20 +16,13 @@
   "author": "",
   "license": "BSD3",
   "devDependencies": {
-    "@types/chai": "^4.2.0",
-    "@types/mocha": "^5.2.7",
-    "@types/node": "^12.7.2",
-    "chai": "^4.2.0",
-    "gulp": "^4.0.0",
-    "gulp-typescript": "^5.0.1",
-    "mocha": "^5.2.0",
-    "ts-node": "^7.0.1",
     "typescript": "^3.5.3",
     "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
     "@types/deep-equal": "^1.0.1",
     "deep-equal": "^1.0.1",
+    "express": "^4.17.1",
     "fp-ts": "^2.0.5",
     "guid-typescript": "^1.0.9",
     "io-ts": "^1.10.4"
