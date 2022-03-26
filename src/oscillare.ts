@@ -63,9 +63,10 @@ export function ain(g?: number){ return  c.chope("audiodevicein")
             "outputresolution": c.mp(9),
             "format": c.mp(4) 
         }, zip([Array(8).fill("uniname"), Array.from(Array(8).keys()), Object.keys(uniforms)]).reduce((acc, v) => { acc[v[0]+v[1]] = c.sp(v[2]); return acc; }, {})
-        , zip([Array(8).fill("value"), Array.from(Array(8).keys()), Object.values(uniforms)]).reduce((acc, v) => { acc[v[0]+v[1]] = v[2]; return acc; }, {})))
-} export function sidebyside(inputs){ return  
-        c.top("glslmulti", {
+        , zip([Array(8).fill("value"), Array.from(Array(8).keys()), Object.values(uniforms)]).reduce((acc, v) => { acc[v[0]+v[1]] = v[2]; return acc; }, {})),
+        )
+} export function sidebyside(inputs){ 
+    return  c.top("glslmulti", {
             pixeldat: c.datp([
                 c.dat("text", {
                     "file" : c.sp("scripts/sidebyside.frag")
@@ -116,8 +117,8 @@ export function noisects(t, amp, channames, seed = c.fp(0)) {
             .c(timeslice(t))
 } export function lines(spacing, width){ return  frag("lines.frag", {"i_spacing": c.x4p(spacing), "i_width": c.x4p(width)})
 } export function shapes(sides, size, width){ return  frag("shapes.frag", {"i_size": c.x4p(size), "i_width": c.x4p(width), "i_sides": c.x4p(sides)})
-} export function stringtheory(time, angle, angle_delta, xoffset){ return 
-        frag("string_theory.frag", 
+} export function stringtheory(time, angle, angle_delta, xoffset){ 
+    return frag("string_theory.frag", 
             { 
                 "i_time": c.x4p(time), 
                 "i_angle": c.x4p(angle), 
@@ -458,8 +459,8 @@ export function torusGeo(sop, lightmap){
 
         return geoGeo(sop, torus, s, cam, lightmap)
     }
-export function flocking(cohesion, sep, sp){ return  
-        tox("toxes/Visuals/flockingGpu.tox",
+export function flocking(cohesion, sep, sp){ 
+    return  tox("toxes/Visuals/flockingGpu.tox",
             { Cohesion: cohesion
             , Separation: sep
             , Alignment: cohesion
@@ -505,8 +506,7 @@ export function flocking(cohesion, sep, sp){ return
 } export function beatramp(beat){ return  c.chop("speed", {resetcondition: c.mp(2)}).run([beat.bps, beat.beatpulse])
 } export function beatxcount(x, reset, beat){ return  c.chop("count", { output: c.mp(1), limitmax: c.fp(x - 1) }).run([beat.beatpulse, reset])
 } export function beatxpulse(x, reset, beat){ return  beatxcount(x, reset, beat).c(c.chop("logic", { preop: c.mp(6) }))
-} export function beatxramp(x, reset, beat){ return  
-        c.chop("speed").run([
+} export function beatxramp(x, reset, beat){ return  c.chop("speed").run([
                 beat.bps.c(c.chop("math", { gain: c.fp(1/x) })).runT(), 
                 beatxpulse(x, reset, beat).runT()
         ])
@@ -555,8 +555,7 @@ export function flocking(cohesion, sep, sp){ return
             nval: c.ip(185), 
             firstsample: c.tp(true)
         }))
-} export function gesturetop(chop){ return 
-        c.top("chopto", { chop: c.chopp([chop])})
+} export function gesturetop(chop){ return c.top("chopto", { chop: c.chopp([chop])})
             .c(c.top("flip", {flipy: c.tp(true)}))
             .c(c.top("resolution", {resolutionw: c.ip(1920), resolutionh: c.ip(1080), outputresolution: c.mp(9)}))
             .c(c.top("reorder", {format: c.mp(26), outputalphachan: c.mp(0)}))
@@ -581,14 +580,12 @@ export function flocking(cohesion, sep, sp){ return
              })))}))
 } export function removed(changes){ return  c.dat("table", {}, [], null, changes)
         .c(c.dat("select", { extractrows: c.mp(5), rownames: c.sp("removed"), extractcols: c.mp(2), colindexstart: c.ip(1)}))
-} export function removedchange(changes){ return  
-        c.chop("math", { gain: c.fp(0.8), chopop: c.mp(2), postop: c.mp(0) }).run([
+} export function removedchange(changes){ return  c.chop("math", { gain: c.fp(0.8), chopop: c.mp(2), postop: c.mp(0) }).run([
             c.chop("info", { op: c.datp(removed(changes)), iscope: c.sp("cook_abs_frame") }),
             c.chop("timeline", { absframe: c.tp(true), frame: c.tp(false) })
         ])
         .c(c.chop("logic", { preop: c.mp(1), convert: c.mp(0) }))
-} export function removedtop(changes){ return  
-        fullscreentext(
+} export function removedtop(changes){ return  fullscreentext(
             removed(changes).c(c.dat("convert", { how: c.mp(0) })), 
             c.chan(c.sp("num_rows"), c.chop("info", { op: c.datp(removed(changes)) }))
             )
